@@ -16,7 +16,7 @@ def listar_mensajes():
         'SELECT COUNT(*) as total FROM mensajes_contacto WHERE leido = 0'
     ).fetchone()['total']
     conn.close()
-    return render_template('admin/mensajes.html', mensajes=mensajes, no_leidos=no_leidos)
+    return render_template('admin/modulos/mensajes.html', mensajes=mensajes, no_leidos=no_leidos)
 
 
 @messages_bp.route('/marcar_leido/<int:id>')

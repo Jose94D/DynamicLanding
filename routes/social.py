@@ -44,7 +44,7 @@ def editar_redes():
     redes_por_plataforma = {r['plataforma']: r for r in redes}
 
     return render_template(
-        'admin/editar_redes.html',
+        'admin/modulos/editar_redes.html',
         redes=redes,
         redes_por_plataforma=redes_por_plataforma,
         plataformas=PLATAFORMAS_SOPORTADAS

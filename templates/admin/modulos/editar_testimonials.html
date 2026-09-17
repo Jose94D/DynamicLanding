@@ -1,0 +1,61 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Testimonios{% endblock %}
+
+{% block content %}
+<h3>Gestor de Testimonios de Clientes</h3>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Nombre del cliente</label>
+                    <input class="form-control" type="text" name="nombre" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Cargo / Empresa (opcional)</label>
+                    <input class="form-control" type="text" name="cargo">
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">Calificación</label>
+                    <select class="form-select" name="calificacion">
+                        <option value="5" selected>5 estrellas</option>
+                        <option value="4">4 estrellas</option>
+                        <option value="3">3 estrellas</option>
+                        <option value="2">2 estrellas</option>
+                        <option value="1">1 estrella</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label class="form-label">Orden</label>
+                    <input class="form-control" type="number" name="orden" value="1" min="1">
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">Testimonio</label>
+                    <textarea class="form-control" name="texto" rows="2" required></textarea>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Foto (opcional)</label>
+                    <input class="form-control" type="file" name="foto" accept="image/*">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Testimonio</button>
+        </form>
+    </div>
+</div>
+
+<div class="list-group">
+    {% for t in testimonios %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <strong>{{ t.nombre }}</strong>{% if t.cargo %} — <span class="text-muted">{{ t.cargo }}</span>{% endif %}
+            <br><small class="text-muted">"{{ t.texto }}" ({{ t.calificacion }}★, orden: {{ t.orden }})</small>
+        </div>
+        <a href="{{ url_for('content.eliminar_testimonial', id=t.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar testimonio?')">Eliminar</a>
+    </div>
+    {% else %}
+    <p class="text-muted">No hay testimonios registrados.</p>
+    {% endfor %}
+</div>
+{% endblock %}

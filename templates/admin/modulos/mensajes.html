@@ -1,0 +1,39 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Mensajes de Contacto{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Mensajes de Contacto</h4>
+        {% if no_leidos > 0 %}
+        <span class="badge bg-danger">{{ no_leidos }} sin leer</span>
+        {% endif %}
+    </div>
+    <div class="list-group list-group-flush">
+        {% for m in mensajes %}
+        <div class="list-group-item {% if not m.leido %}bg-light{% endif %}">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <strong>{{ m.nombre }}</strong>
+                    {% if not m.leido %}<span class="badge bg-primary ms-2">Nuevo</span>{% endif %}
+                    <br>
+                    <a href="mailto:{{ m.email }}" class="small text-muted">{{ m.email }}</a>
+                    <br>
+                    <small class="text-muted">{{ m.fecha_envio }}</small>
+                </div>
+                <div class="text-end">
+                    {% if not m.leido %}
+                    <a href="{{ url_for('messages.marcar_leido', id=m.id) }}" class="btn btn-outline-secondary btn-sm">Marcar leído</a>
+                    {% endif %}
+                    <a href="{{ url_for('messages.eliminar_mensaje', id=m.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este mensaje?')">Eliminar</a>
+                </div>
+            </div>
+            <p class="mt-2 mb-0">{{ m.mensaje }}</p>
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-4 mb-0">No has recibido mensajes todavía.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

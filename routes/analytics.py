@@ -22,7 +22,7 @@ def analiticas():
         ORDER BY periodo ASC
     ''').fetchall()
 
-    # Desglose anual (para la tabla resumen)
+    # Desglose anual (para el gráfico y la tarjeta de resumen)
     por_anio = conn.execute('''
         SELECT strftime('%Y', fecha) AS anio, COUNT(*) AS total
         FROM analiticas_visitas
@@ -30,21 +30,39 @@ def analiticas():
         ORDER BY anio ASC
     ''').fetchall()
 
-    # Páginas más visitadas
-    paginas_top = conn.execute('''
-        SELECT ruta, COUNT(*) AS total
+    # Desglose semanal (para el gráfico)
+    por_semana = conn.execute('''
+        SELECT strftime('%Y-%W', fecha) AS periodo, COUNT(*) AS total
         FROM analiticas_visitas
-        GROUP BY ruta
-        ORDER BY total DESC
-        LIMIT 10
+        GROUP BY periodo
+        ORDER BY periodo ASC
     ''').fetchall()
+
+    # Totales del período actual (para las tarjetas de resumen)
+    visitas_anio_actual = conn.execute('''
+        SELECT COUNT(*) as total FROM analiticas_visitas
+        WHERE strftime('%Y', fecha) = strftime('%Y', 'now')
+    ''').fetchone()['total']
+
+    visitas_mes_actual = conn.execute('''
+        SELECT COUNT(*) as total FROM analiticas_visitas
+        WHERE strftime('%Y-%m', fecha) = strftime('%Y-%m', 'now')
+    ''').fetchone()['total']
+
+    visitas_semana_actual = conn.execute('''
+        SELECT COUNT(*) as total FROM analiticas_visitas
+        WHERE strftime('%Y-%W', fecha) = strftime('%Y-%W', 'now')
+    ''').fetchone()['total']
 
     conn.close()
 
     return render_template(
-        'admin/analiticas.html',
+        'admin/modulos/analiticas.html',
         total_visitas=total_visitas,
         por_mes=por_mes,
         por_anio=por_anio,
-        paginas_top=paginas_top
+        por_semana=por_semana,
+        visitas_anio_actual=visitas_anio_actual,
+        visitas_mes_actual=visitas_mes_actual,
+        visitas_semana_actual=visitas_semana_actual
     )

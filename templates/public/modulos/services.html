@@ -1,25 +1,30 @@
+{# =========================================================
+   Variable esperada en el contexto:
+     services -> lista de items, cada uno con:
+         s.icono        -> clase(s) del ícono completas, ej: "fa-solid fa-wrench" o "bi bi-wrench"
+         s.titulo
+         s.descripcion
+   El grid se centra automáticamente y las tarjetas crecen para ocupar el espacio
+   disponible en su fila (hasta un ancho máximo razonable), así no queda espacio
+   vacío cuando hay pocos servicios: con 1 se centra y ocupa una porción amplia,
+   con 2-3 se reparten el ancho entre ellos, y con 4+ se distribuyen en fila(s).
+   ========================================================= #}
+
 {% if services %}
-<section class="py-5 bg-white" id="services">
+<section class="py-5 services-section" id="services">
     <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-lg-8 mx-auto">
-                <h2 class="fw-bold">Nuestros Servicios</h2>
-                <p class="lead text-muted">Lo que podemos hacer por ti.</p>
-            </div>
-        </div>
-        
-        <div class="row g-4">
+        <div class="services-grid">
             {% for s in services %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card h-100 border-0 shadow-sm text-center p-4 transition-hover">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="bi {{ s.icono }} text-primary" style="font-size: 3rem;"></i>
-                        </div>
-                        <h4 class="card-title fw-bold mb-3">{{ s.titulo }}</h4>
-                        <p class="card-text text-muted">{{ s.descripcion }}</p>
+            <div class="services-item">
+                {% if s.icono %}
+                    <div class="services-icon">
+                        <i class="{{ s.icono }}"></i>
                     </div>
-                </div>
+                {% endif %}
+                <h4 class="services-title">{{ s.titulo }}</h4>
+                {% if s.descripcion %}
+                    <div class="services-desc mb-0">{{ s.descripcion | safe }}</div>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -27,7 +32,81 @@
 </section>
 
 <style>
-    .transition-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .transition-hover:hover { transform: translateY(-5px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important; }
+    :root {
+        --services-dark: #10261f;
+        --services-highlight-bg: #ece5d4;
+        --services-border: rgba(16, 38, 31, .12);
+    }
+
+    .services-section {
+        background-color: #ffffff;
+    }
+
+    .services-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .services-item {
+        flex: 1 1 240px;
+        max-width: 380px;
+        padding: 2.5rem 2rem;
+        text-align: left;
+        border-right: 1px solid var(--services-border);
+        border-radius: .5rem;
+        transition: background-color .25s ease;
+    }
+    .services-item:last-child {
+        border-right: none;
+    }
+    /* Al pasar el mouse, se resalta ese servicio con el tono crema (y no lleva línea divisoria a su lado) */
+    .services-item:hover {
+        background-color: var(--services-highlight-bg);
+        border-right-color: transparent;
+    }
+    .services-item:hover + .services-item {
+        border-left: none;
+    }
+
+    .services-icon {
+        font-size: 2rem;
+        color: var(--services-dark);
+        margin-bottom: 1.75rem;
+        line-height: 1;
+    }
+
+    .services-title {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--services-dark);
+        margin-bottom: 1rem;
+    }
+
+    .services-desc {
+        font-size: .95rem;
+        line-height: 1.65;
+        color: rgba(16, 38, 31, .65);
+    }
+
+    .services-desc p:first-child {
+        margin-top: 0;
+    }
+    .services-desc p:last-child {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 767.98px) {
+        .services-item {
+            flex: 1 1 260px;
+            max-width: 420px;
+            border-right: none;
+            border-bottom: 1px solid var(--services-border);
+            text-align: center;
+        }
+        .services-item:last-child {
+            border-bottom: none;
+        }
+    }
 </style>
 {% endif %}

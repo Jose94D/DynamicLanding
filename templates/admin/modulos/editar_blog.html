@@ -1,0 +1,75 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Blog{% endblock %}
+
+{% block content %}
+<h3>Redactar Nuevo Artículo</h3>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Título</label>
+                <input class="form-control" type="text" name="titulo" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Extracto (Resumen para la landing)</label>
+                <textarea class="form-control" name="extracto" rows="2" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contenido Completo</label>
+                <textarea class="form-control" name="contenido" id="contenido-textarea" rows="8" required></textarea>
+                <div id="contenido-editor" style="display:none;"></div>
+                <div id="contenido-error" class="text-danger small mt-1" style="display:none;">
+                    El contenido no puede quedar vacío.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Publicar Artículo</button>
+        </form>
+    </div>
+</div>
+
+<h4>Artículos Publicados</h4>
+<div class="list-group mb-5">
+    {% for a in articulos %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <strong>{{ a.titulo }}</strong>
+            {% if a.activo == 1 %}
+            <span class="badge bg-success ms-2">Publicado</span>
+            {% else %}
+            <span class="badge bg-secondary ms-2">Borrador</span>
+            {% endif %}
+            <br>
+            <small class="text-muted">Publicado el: {{ a.fecha_publicacion }}</small>
+        </div>
+        <div>
+            <a href="{{ url_for('public.ver_articulo', id=a.id) }}" target="_blank" class="btn btn-outline-secondary btn-sm">Ver</a>
+            <a href="{{ url_for('content.editar_articulo', id=a.id) }}" class="btn btn-outline-primary btn-sm">Editar</a>
+            <a href="{{ url_for('content.eliminar_articulo', id=a.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar artículo?')">Eliminar</a>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-muted">No hay artículos publicados aún.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    inicializarEditorEnriquecido({
+        textareaId: 'contenido-textarea',
+        editorId: 'contenido-editor',
+        errorId: 'contenido-error',
+        placeholder: 'Escribe el contenido del artículo...',
+        toolbar: [
+            [{ header: [2, 3, false] }],
+            ['bold', 'italic', 'underline'],
+            ['link', 'image'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['blockquote'],
+            ['clean']
+        ]
+    });
+</script>
+{% endblock %}

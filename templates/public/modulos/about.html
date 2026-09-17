@@ -15,8 +15,8 @@
             <!-- Columna Derecha: Descripción -->
             <div class="col-lg-6 offset-lg-1">
                 <div class="text-secondary" style="line-height: 1.8; font-size: 1.1rem;">
-                    <!-- Se usa pre-wrap para respetar los saltos de línea del textarea -->
-                    <div style="white-space: pre-wrap;">{{ about.descripcion }}</div>
+                    <!-- Contenido enriquecido (HTML) generado por el editor del panel de administración -->
+                    {{ about.descripcion | safe }}
                 </div>
             </div>
         </div>

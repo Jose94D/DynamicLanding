@@ -25,4 +25,4 @@ def editar_seo():
 
     seo = conn.execute('SELECT * FROM configuracion_seo WHERE id = 1').fetchone()
     conn.close()
-    return render_template('admin/editar_seo.html', seo=seo)
+    return render_template('admin/modulos/editar_seo.html', seo=seo)

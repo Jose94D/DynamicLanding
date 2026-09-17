@@ -1,32 +1,47 @@
+{# =========================================================
+   Variables esperadas en el contexto:
+     gallery -> lista de items, cada uno con:
+         item.nombre_archivo -> nombre del archivo en static/uploads/gallery/
+         item.titulo (opcional) -> se usa como alt / caption en el modal
+   ========================================================= #}
+
 {% if gallery %}
-<section class="py-5 bg-white" id="gallery">
+<section class="py-5 gallery-section" id="gallery">
     <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-lg-8 mx-auto">
-                <h2 class="fw-bold">Nuestros Trabajos</h2>
-                <p class="lead text-muted">Un vistazo a lo que hemos hecho.</p>
+        <div class="row align-items-end mb-4">
+            <div class="col">
+                <p class="gallery-eyebrow mb-2">Galería</p>
+                <h2 class="gallery-title mb-0">Algunos de mis trabajos</h2>
             </div>
         </div>
 
-        <div class="row g-3">
-            {% for item in gallery %}
-            <div class="col-6 col-md-4 col-lg-3">
+        <div class="position-relative">
+            <!-- Flecha izquierda -->
+            <button type="button" class="gallery-arrow gallery-arrow-prev" aria-label="Anterior">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <!-- Carrusel horizontal -->
+            <div class="gallery-track" id="galleryTrack">
+                {% for item in gallery %}
                 <a href="{{ url_for('static', filename='uploads/gallery/' ~ item.nombre_archivo) }}"
-                   class="d-block gallery-item"
+                   class="gallery-item"
                    data-bs-toggle="modal"
                    data-bs-target="#galleryModal"
                    data-img="{{ url_for('static', filename='uploads/gallery/' ~ item.nombre_archivo) }}"
                    data-caption="{{ item.titulo }}">
-                    <div class="ratio ratio-1x1 overflow-hidden rounded shadow-sm">
+                    <div class="ratio gallery-ratio overflow-hidden rounded">
                         <img src="{{ url_for('static', filename='uploads/gallery/' ~ item.nombre_archivo) }}"
                              class="w-100 h-100" style="object-fit: cover;" alt="{{ item.titulo }}">
                     </div>
-                    {% if item.titulo %}
-                    <p class="text-center text-muted small mt-2 mb-0">{{ item.titulo }}</p>
-                    {% endif %}
                 </a>
+                {% endfor %}
             </div>
-            {% endfor %}
+
+            <!-- Flecha derecha -->
+            <button type="button" class="gallery-arrow gallery-arrow-next" aria-label="Siguiente">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
         </div>
     </div>
 
@@ -42,15 +57,142 @@
     </div>
 </section>
 
+<style>
+    :root {
+        --gallery-dark: #10261f;
+        --gallery-gold: #c8a765;
+        --gallery-bg: #f4f1ea;
+    }
+
+    .gallery-section {
+        background-color: var(--gallery-bg);
+    }
+
+    .gallery-eyebrow {
+        font-size: .75rem;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: var(--gallery-gold);
+        font-weight: 600;
+    }
+
+    .gallery-title {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-weight: 600;
+        font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+        color: var(--gallery-dark);
+    }
+
+    /* Carrusel horizontal con scroll-snap */
+    .gallery-track {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        padding-bottom: .25rem;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .gallery-track::-webkit-scrollbar {
+        display: none;
+    }
+
+    .gallery-track {
+        gap: .5rem;
+    }
+
+    .gallery-item {
+        flex: 0 0 auto;
+        /* Ancho calculado para que se vean exactamente 5 items completos, como en la referencia */
+        width: calc((100% - 4 * .5rem) / 5);
+        scroll-snap-align: start;
+        text-decoration: none;
+        transition: transform .25s ease;
+    }
+    .gallery-item:hover {
+        transform: translateY(-4px);
+    }
+
+    .gallery-ratio {
+        --bs-aspect-ratio: 76%; /* proporción horizontal ~4:3, como en la referencia */
+        border-radius: .375rem;
+    }
+    .gallery-ratio img {
+        transition: transform .4s ease;
+    }
+    .gallery-item:hover .gallery-ratio img {
+        transform: scale(1.05);
+    }
+
+    /* Flechas de navegación, ubicadas fuera del contenedor */
+    .gallery-arrow {
+        position: absolute;
+        top: 50%;
+        translate: 0 -50%;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 50%;
+        border: 1px solid rgba(16, 38, 31, .18);
+        background-color: transparent;
+        color: var(--gallery-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .8rem;
+        z-index: 2;
+        transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    }
+    .gallery-arrow:hover {
+        background-color: var(--gallery-dark);
+        border-color: var(--gallery-dark);
+        color: #ffffff;
+    }
+    .gallery-arrow-prev {
+        left: -3rem;
+    }
+    .gallery-arrow-next {
+        right: -3rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .gallery-arrow-prev { left: -.25rem; }
+        .gallery-arrow-next { right: -.25rem; }
+    }
+
+    @media (max-width: 767.98px) {
+        .gallery-arrow { display: none; }
+        .gallery-item { width: 150px; }
+    }
+</style>
+
 <script>
-    // Rellena el modal con la imagen y el título en los que se hizo click
     document.addEventListener('DOMContentLoaded', function () {
+        // Modal con imagen y título
         var galleryModal = document.getElementById('galleryModal');
         if (galleryModal) {
             galleryModal.addEventListener('show.bs.modal', function (event) {
                 var trigger = event.relatedTarget;
                 document.getElementById('galleryModalImg').src = trigger.getAttribute('data-img');
                 document.getElementById('galleryModalCaption').textContent = trigger.getAttribute('data-caption') || '';
+            });
+        }
+
+        // Flechas del carrusel
+        var track = document.getElementById('galleryTrack');
+        var prevBtn = document.querySelector('.gallery-arrow-prev');
+        var nextBtn = document.querySelector('.gallery-arrow-next');
+        if (track && prevBtn && nextBtn) {
+            var scrollAmount = function () {
+                var item = track.querySelector('.gallery-item');
+                var gap = parseFloat(getComputedStyle(track).gap) || 8;
+                return item ? item.offsetWidth + gap : 200;
+            };
+            prevBtn.addEventListener('click', function () {
+                track.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
+            });
+            nextBtn.addEventListener('click', function () {
+                track.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
             });
         }
     });

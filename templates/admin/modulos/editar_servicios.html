@@ -1,0 +1,422 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Servicios{% endblock %}
+
+{% block extra_head %}
+<style>
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 6px;
+    max-height: 55vh;
+    overflow-y: auto;
+}
+.icon-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 4px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: background-color .1s ease, border-color .1s ease;
+    text-align: center;
+}
+.icon-option:hover {
+    background: #f0f4ff;
+    border-color: #0d6efd;
+}
+.icon-option i {
+    font-size: 1.4rem;
+}
+.icon-option small {
+    font-size: 0.65rem;
+    color: #6c757d;
+    word-break: break-all;
+    line-height: 1.1;
+}
+.drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 1.3rem;
+    cursor: grab;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    touch-action: none;
+    user-select: none;
+    flex-shrink: 0;
+}
+.drag-handle:hover {
+    background-color: #dee2e6;
+    color: #212529;
+}
+.drag-handle:active {
+    cursor: grabbing;
+    background-color: #ced4da;
+}
+#serviciosList .sortable-ghost {
+    opacity: 0.4;
+    background-color: #e9ecef;
+}
+/* La descripción guardada trae HTML de Quill (envuelto en <p>, <ul>, etc.).
+   Para mostrarla en la vista previa del admin tal como se vería en el sitio
+   público (negrita, cursiva, subrayado...) pero sin que esas etiquetas de
+   bloque rompan la línea "título - descripción", forzamos que se comporten
+   como texto en línea. */
+.desc-preview p,
+.desc-preview ul,
+.desc-preview ol,
+.desc-preview li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+.desc-preview li:not(:last-child)::after {
+    content: ", ";
+}
+.icon-trigger {
+    cursor: pointer;
+    transition: background-color .15s ease;
+}
+.icon-trigger:hover {
+    background-color: #eef2ff;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h3>Gestor de Servicios / Características</h3>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Icono</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white icon-trigger" role="button" tabindex="0" title="Elegir ícono" onclick="abrirIconPicker('icono_add', 'icono_add_preview')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirIconPicker('icono_add', 'icono_add_preview');}">
+                            <i id="icono_add_preview" class="bi bi-star fs-5 text-primary"></i>
+                        </span>
+                        <input class="form-control" type="text" id="icono_add" name="icono" value="bi-star" readonly required>
+                    </div>
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">Título</label>
+                    <input class="form-control" type="text" name="titulo" required>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Descripción corta</label>
+                    <textarea class="form-control" name="descripcion" id="descripcion-add-textarea" rows="2" required></textarea>
+                    <div id="descripcion-add-editor" style="display:none;"></div>
+                    <div id="descripcion-add-error" class="text-danger small mt-1" style="display:none;">
+                        Este campo no puede quedar vacío.
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Servicio</button>
+        </form>
+    </div>
+</div>
+
+<div class="list-group"
+     id="serviciosList"
+     data-reorder-url="{{ url_for('content.reordenar_servicios') }}"
+     data-edit-url-base="{{ url_for('content.editar_servicio', id=999999999) }}">
+    {% for s in servicios %}
+    <div class="list-group-item d-flex justify-content-between align-items-center"
+         data-id="{{ s.id }}"
+         data-icono="{{ s.icono }}"
+         data-titulo="{{ s.titulo }}"
+         data-descripcion="{{ s.descripcion }}"
+         data-orden="{{ s.orden }}">
+        <div class="d-flex align-items-center">
+            <span class="drag-handle me-3" title="Arrastrar para reordenar" aria-label="Arrastrar para reordenar">
+                <i class="bi bi-grip-vertical"></i>
+            </span>
+            <i class="bi {{ s.icono }} fs-4 me-3 text-primary"></i>
+            <div>
+                <strong>{{ s.titulo }}</strong> - <span class="desc-preview">{{ s.descripcion | safe }}</span>
+            </div>
+        </div>
+        <div class="d-flex gap-2 align-items-center flex-shrink-0">
+            <span class="badge bg-secondary orden-badge">Orden: {{ s.orden }}</span>
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="abrirEditarServicio(this)">
+                <i class="bi bi-pencil-square"></i> Editar
+            </button>
+            <a href="{{ url_for('content.eliminar_servicio', id=s.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar servicio?')">
+                <i class="bi bi-trash"></i> Eliminar
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-muted" id="emptyState">No hay servicios registrados.</p>
+    {% endfor %}
+</div>
+{% if servicios %}
+<p class="text-muted small mt-2">
+    <i class="bi bi-info-circle"></i>
+    Arrastra los servicios desde el ícono <i class="bi bi-grip-vertical"></i> para cambiar su orden. El nuevo orden se guarda automáticamente.
+</p>
+{% endif %}
+<p class="text-muted small">
+    <i class="bi bi-exclamation-triangle"></i>
+    Se recomienda un máximo de <strong>5 servicios</strong> para no romper el diseño del módulo en la página de inicio.
+</p>
+
+<!-- Modal: editar servicio -->
+<div class="modal fade" id="editServicioModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" id="editServicioForm">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Editar servicio</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Icono</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white icon-trigger" role="button" tabindex="0" title="Elegir ícono" onclick="abrirIconPicker('icono_edit', 'icono_edit_preview')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirIconPicker('icono_edit', 'icono_edit_preview');}">
+                <i id="icono_edit_preview" class="bi bi-star fs-5 text-primary"></i>
+              </span>
+              <input class="form-control" type="text" id="icono_edit" name="icono" readonly required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Título</label>
+            <input class="form-control" type="text" id="titulo_edit" name="titulo" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Descripción corta</label>
+            <textarea class="form-control" id="descripcion_edit" name="descripcion" rows="2" required></textarea>
+            <div id="descripcion-edit-editor" style="display:none;"></div>
+            <div id="descripcion-edit-error" class="text-danger small mt-1" style="display:none;">
+                Este campo no puede quedar vacío.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: elegir ícono -->
+<div class="modal fade" id="iconPickerModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-grid-3x3-gap me-2"></i>Elegir un ícono</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="iconSearchInput" class="form-control mb-3" placeholder="Buscar ícono (ej: telefono, casa, estrella, reloj)...">
+        <div id="iconGrid" class="icon-grid"></div>
+        <p id="iconNoResults" class="text-muted text-center mt-3 d-none">No se encontraron íconos con ese nombre. Puedes buscar el nombre exacto en <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script>
+inicializarEditorEnriquecido({
+    textareaId: 'descripcion-add-textarea',
+    editorId: 'descripcion-add-editor',
+    errorId: 'descripcion-add-error',
+    placeholder: 'Describe brevemente el servicio...',
+    toolbar: [
+        ['bold', 'italic', 'underline'],
+        ['link'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['clean']
+    ]
+});
+
+inicializarEditorEnriquecido({
+    textareaId: 'descripcion_edit',
+    editorId: 'descripcion-edit-editor',
+    errorId: 'descripcion-edit-error',
+    placeholder: 'Describe brevemente el servicio...',
+    toolbar: [
+        ['bold', 'italic', 'underline'],
+        ['link'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['clean']
+    ]
+});
+
+// ------------------------------------------------------------------
+// Lista curada de íconos de Bootstrap Icons más usados en sitios de
+// servicios/negocios. Se puede ampliar libremente agregando strings
+// "bi-xxx" a este arreglo.
+// ------------------------------------------------------------------
+const ICONOS_DISPONIBLES = [
+    "bi-star","bi-star-fill","bi-heart","bi-heart-fill","bi-award","bi-trophy",
+    "bi-lightbulb","bi-rocket","bi-lightning","bi-lightning-charge","bi-gear",
+    "bi-gear-fill","bi-gear-wide-connected","bi-tools","bi-wrench","bi-wrench-adjustable",
+    "bi-hammer","bi-screwdriver","bi-cpu","bi-hdd","bi-server","bi-database",
+    "bi-cloud","bi-cloud-fill","bi-cloud-upload","bi-cloud-download","bi-cloud-check",
+    "bi-wifi","bi-router","bi-ethernet","bi-bluetooth","bi-usb-plug","bi-plug",
+    "bi-laptop","bi-pc-display","bi-display","bi-tablet","bi-phone","bi-smartwatch",
+    "bi-code-slash","bi-code","bi-terminal","bi-bug","bi-window","bi-browser-chrome",
+    "bi-house","bi-house-door","bi-house-gear","bi-house-heart","bi-building",
+    "bi-building-gear","bi-shop","bi-bank","bi-hospital","bi-geo-alt","bi-map",
+    "bi-compass","bi-signpost","bi-globe","bi-globe2","bi-pin-map",
+    "bi-telephone","bi-telephone-fill","bi-telephone-inbound","bi-headset",
+    "bi-headset-vr","bi-chat","bi-chat-dots","bi-chat-square-text","bi-envelope",
+    "bi-envelope-open","bi-send","bi-megaphone","bi-bell","bi-bell-fill",
+    "bi-people","bi-person","bi-person-check","bi-person-gear","bi-person-badge",
+    "bi-person-workspace","bi-person-hearts","bi-briefcase","bi-briefcase-fill",
+    "bi-mortarboard","bi-book","bi-journal-text","bi-file-earmark-text",
+    "bi-folder","bi-folder2-open","bi-archive","bi-clipboard-check","bi-clipboard-data",
+    "bi-check-circle","bi-check-circle-fill","bi-check2-square","bi-patch-check",
+    "bi-shield","bi-shield-check","bi-shield-lock","bi-lock","bi-unlock","bi-key",
+    "bi-eye","bi-search","bi-filter","bi-sliders","bi-funnel",
+    "bi-graph-up","bi-graph-up-arrow","bi-bar-chart","bi-bar-chart-line",
+    "bi-pie-chart","bi-kanban","bi-list-check","bi-calculator","bi-cash",
+    "bi-cash-coin","bi-currency-dollar","bi-wallet2","bi-piggy-bank","bi-coin",
+    "bi-credit-card","bi-receipt","bi-percent","bi-bag","bi-bag-check","bi-cart",
+    "bi-cart-check","bi-box","bi-boxes","bi-truck","bi-gift",
+    "bi-camera","bi-camera-video","bi-mic","bi-music-note","bi-film","bi-image",
+    "bi-palette","bi-brush","bi-pencil","bi-pencil-square","bi-scissors","bi-magic",
+    "bi-stars","bi-sun","bi-moon","bi-cloud-sun","bi-cloud-rain","bi-umbrella",
+    "bi-droplet","bi-fire","bi-snow","bi-tree","bi-flower1","bi-leaf","bi-recycle",
+    "bi-car-front","bi-bicycle","bi-airplane","bi-train-front","bi-bus-front",
+    "bi-boat","bi-anchor","bi-speedometer2","bi-fuel-pump","bi-battery",
+    "bi-heart-pulse","bi-activity","bi-bandage","bi-capsule","bi-thermometer-half",
+    "bi-clock","bi-clock-history","bi-alarm","bi-stopwatch","bi-hourglass-split",
+    "bi-calendar","bi-calendar-check","bi-calendar-event","bi-flag","bi-flag-fill",
+    "bi-check-lg","bi-x-lg","bi-plus-circle","bi-infinity","bi-puzzle",
+    "bi-diagram-3","bi-share","bi-link-45deg","bi-printer","bi-qr-code"
+];
+
+let currentIconTargetInput = null;
+let currentIconTargetPreview = null;
+
+function poblarIconGrid(filtro) {
+    const grid = document.getElementById('iconGrid');
+    const noResults = document.getElementById('iconNoResults');
+    const filtroLower = (filtro || '').toLowerCase().trim();
+
+    const filtrados = ICONOS_DISPONIBLES.filter(icono =>
+        icono.replace('bi-', '').replace(/-/g, ' ').includes(filtroLower)
+    );
+
+    grid.innerHTML = '';
+    if (filtrados.length === 0) {
+        noResults.classList.remove('d-none');
+        return;
+    }
+    noResults.classList.add('d-none');
+
+    filtrados.forEach(icono => {
+        const btn = document.createElement('div');
+        btn.className = 'icon-option';
+        btn.innerHTML = `<i class="bi ${icono}"></i><small>${icono}</small>`;
+        btn.addEventListener('click', () => seleccionarIcono(icono));
+        grid.appendChild(btn);
+    });
+}
+
+function abrirIconPicker(inputId, previewId) {
+    currentIconTargetInput = document.getElementById(inputId);
+    currentIconTargetPreview = document.getElementById(previewId);
+
+    const modalEl = document.getElementById('iconPickerModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    document.getElementById('iconSearchInput').value = '';
+    poblarIconGrid('');
+    modal.show();
+
+    modalEl.addEventListener('shown.bs.modal', () => {
+        document.getElementById('iconSearchInput').focus();
+    }, { once: true });
+}
+
+function seleccionarIcono(icono) {
+    if (currentIconTargetInput) {
+        currentIconTargetInput.value = icono;
+    }
+    if (currentIconTargetPreview) {
+        currentIconTargetPreview.className = 'bi ' + icono + ' fs-5 text-primary';
+    }
+    const modalEl = document.getElementById('iconPickerModal');
+    bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+}
+
+document.getElementById('iconSearchInput').addEventListener('input', (e) => {
+    poblarIconGrid(e.target.value);
+});
+
+// ------------------------------------------------------------------
+// Modal de edición de un servicio existente
+// ------------------------------------------------------------------
+function abrirEditarServicio(btn) {
+    const item = btn.closest('.list-group-item');
+
+    document.getElementById('icono_edit').value = item.dataset.icono;
+    document.getElementById('icono_edit_preview').className = 'bi ' + item.dataset.icono + ' fs-5 text-primary';
+    document.getElementById('titulo_edit').value = item.dataset.titulo;
+    actualizarContenidoEditorEnriquecido('descripcion_edit', item.dataset.descripcion);
+
+    const urlBase = document.getElementById('serviciosList').dataset.editUrlBase;
+    document.getElementById('editServicioForm').action = urlBase.replace('999999999', item.dataset.id);
+
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('editServicioModal')).show();
+}
+
+// ------------------------------------------------------------------
+// Drag & drop para reordenar servicios
+// ------------------------------------------------------------------
+const serviciosList = document.getElementById('serviciosList');
+if (serviciosList && serviciosList.querySelector('.list-group-item')) {
+    new Sortable(serviciosList, {
+        handle: '.drag-handle',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: function () {
+            const ids = Array.from(serviciosList.children)
+                .filter(el => el.dataset && el.dataset.id)
+                .map(el => el.dataset.id);
+
+            fetch(serviciosList.dataset.reorderUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orden: ids })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.ok) {
+                    Array.from(serviciosList.children).forEach((el, idx) => {
+                        if (el.dataset && el.dataset.id) {
+                            el.dataset.orden = idx + 1;
+                            const badge = el.querySelector('.orden-badge');
+                            if (badge) badge.textContent = 'Orden: ' + (idx + 1);
+                        }
+                    });
+                } else {
+                    alert('No se pudo guardar el nuevo orden. Intenta de nuevo.');
+                }
+            })
+            .catch(() => alert('Error de conexión al guardar el nuevo orden.'));
+        }
+    });
+}
+</script>
+{% endblock %}

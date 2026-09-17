@@ -6,14 +6,21 @@
     <!-- SEO Dinámico inyectado desde SQLite -->
     <title>{% block title %}{{ seo.meta_titulo if seo else 'Cargando...' }}{% endblock %}</title>
     <meta name="description" content="{{ seo.meta_descripcion if seo else '' }}">
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- CSS Personalizado -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CSS base del sitio público -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_public.css') }}">
+
+    <!-- CSS específico de cada módulo (cada vista hija agrega aquí lo que necesite) -->
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    
+
     <!-- Aquí se inyectará el contenido de las otras plantillas -->
     <main>
         {% block content %}{% endblock %}
@@ -21,5 +28,8 @@
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS específico de cada módulo (opcional, mismo patrón que el CSS) -->
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

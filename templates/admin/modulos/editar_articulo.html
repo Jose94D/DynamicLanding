@@ -1,0 +1,61 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Editar Artículo{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('content.editar_blog') }}" class="btn btn-secondary mb-3">Volver al Gestor de Blog</a>
+<h3>Editar Artículo</h3>
+
+<div class="card shadow-sm mb-5">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Título</label>
+                <input class="form-control" type="text" name="titulo" value="{{ articulo.titulo }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Extracto (Resumen para la landing)</label>
+                <textarea class="form-control" name="extracto" rows="2" required>{{ articulo.extracto }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contenido Completo</label>
+                <textarea class="form-control" name="contenido" id="contenido-textarea" rows="10" required>{{ articulo.contenido }}</textarea>
+                <div id="contenido-editor" style="display:none;"></div>
+                <div id="contenido-error" class="text-danger small mt-1" style="display:none;">
+                    El contenido no puede quedar vacío.
+                </div>
+            </div>
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" name="activo" id="activo"
+                       {% if articulo.activo == 1 %}checked{% endif %}>
+                <label class="form-check-label" for="activo">
+                    Publicado (desactívalo para guardar como borrador, sin mostrarlo en la landing)
+                </label>
+            </div>
+            <small class="text-muted d-block mb-3">
+                URL pública: <code>/articulo/{{ articulo.id }}</code> — no cambia al editar el título.
+            </small>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    inicializarEditorEnriquecido({
+        textareaId: 'contenido-textarea',
+        editorId: 'contenido-editor',
+        errorId: 'contenido-error',
+        placeholder: 'Escribe el contenido del artículo...',
+        toolbar: [
+            [{ header: [2, 3, false] }],
+            ['bold', 'italic', 'underline'],
+            ['link', 'image'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['blockquote'],
+            ['clean']
+        ]
+    });
+</script>
+{% endblock %}

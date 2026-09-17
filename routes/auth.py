@@ -71,4 +71,4 @@ def cambiar_password():
         flash("Contraseña actualizada exitosamente.", "success")
         return redirect(url_for('dashboard.dashboard'))
 
-    return render_template('admin/cambiar_password.html')
+    return render_template('admin/modulos/cambiar_password.html')
