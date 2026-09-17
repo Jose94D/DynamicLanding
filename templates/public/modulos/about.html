@@ -6,9 +6,10 @@
             <div class="col-lg-5 mb-4 mb-lg-0">
                 <h2 class="fw-bold display-6 text-dark mb-4">{{ about.titulo }}</h2>
                 <div class="p-4 bg-light rounded border-start border-primary border-4">
-                    <p class="fst-italic text-muted mb-0 fs-5">
-                        "{{ about.mision }}"
-                    </p>
+                    <div class="fst-italic text-muted mb-0 fs-5">
+                        <!-- Contenido enriquecido (HTML) generado por el editor del panel de administración -->
+                        {{ about.mision | safe }}
+                    </div>
                 </div>
             </div>
             

@@ -2,47 +2,15 @@
 
 {% block title %}Dashboard{% endblock %}
 
-{% block extra_head %}
-<style>
-    #tabla-modulos tr.sortable-ghost {
-        opacity: 0.4;
-        background-color: #e9ecef;
-    }
-    .drag-handle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background-color: #f1f3f5;
-        color: #495057;
-        font-size: 1.3rem;
-        cursor: grab;
-        transition: background-color 0.15s ease, color 0.15s ease;
-        touch-action: none;
-        user-select: none;
-    }
-    .drag-handle:hover {
-        background-color: #dee2e6;
-        color: #212529;
-    }
-    .drag-handle:active {
-        cursor: grabbing;
-        background-color: #ced4da;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-header bg-white">
-        <h4 class="mb-0">Control de Módulos de la Landing</h4>
-        <small class="text-muted">
+<div class="card border shadow-sm rounded-4">
+    <div class="card-header bg-white border-bottom p-4">
+        <h4 class="fw-semibold mb-0">Control de Módulos de la Landing</h4>
+        <small class="text-secondary">
             <i class="bi bi-info-circle me-1"></i>Arrastra las filas desde <i class="bi bi-grip-vertical"></i> para cambiar el orden.
         </small>
     </div>
-    <div class="card-body">
+    <div class="card-body p-4">
         <form method="POST" id="form-modulos">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
@@ -76,7 +44,7 @@
                 </tbody>
             </table>
             <div class="text-end mt-3">
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <button type="submit" class="btn btn-dark">Guardar Cambios</button>
             </div>
         </form>
     </div>

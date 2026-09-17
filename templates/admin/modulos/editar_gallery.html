@@ -3,49 +3,22 @@
 {% block title %}Galería{% endblock %}
 
 {% block extra_head %}
-<style>
-.gallery-drag-handle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #f1f3f5;
-    color: #495057;
-    font-size: 1.1rem;
-    cursor: grab;
-    transition: background-color .15s ease, color .15s ease;
-    touch-action: none;
-    user-select: none;
-}
-.gallery-drag-handle:hover {
-    background-color: #dee2e6;
-    color: #212529;
-}
-.gallery-drag-handle:active {
-    cursor: grabbing;
-    background-color: #ced4da;
-}
-.gallery-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: .4rem .6rem;
-    background-color: #fff;
-    border-bottom: 1px solid rgba(0,0,0,.08);
-}
-#galleryList .sortable-ghost {
-    opacity: 0.4;
-}
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modulos_admin/editar_gallery.css') }}">
 {% endblock %}
 
 {% block content %}
-<h3>Gestor de Galería de Productos</h3>
+<div class="d-flex align-items-center gap-3 mb-4">
+    <div class="admin-icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center">
+        <i class="bi bi-grid-3x3-gap"></i>
+    </div>
+    <div>
+        <h3 class="fs-5 fw-semibold mb-0">Gestor de Galería de Productos</h3>
+        <p class="text-secondary small mb-0">Agrega, ordena y edita las imágenes de la galería.</p>
+    </div>
+</div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
+<div class="card border shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
         <form method="POST" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-8 mb-3">
@@ -57,7 +30,7 @@
                     <input class="form-control" type="text" name="titulo">
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Agregar a la Galería</button>
+            <button type="submit" class="btn btn-dark">Agregar a la Galería</button>
         </form>
     </div>
 </div>
@@ -65,7 +38,7 @@
 <div class="row" id="galleryList" data-reorder-url="{{ url_for('content.reordenar_gallery') }}">
     {% for item in items %}
     <div class="col-md-3 mb-3" data-id="{{ item.id }}">
-        <div class="card">
+        <div class="card border shadow-sm rounded-4 overflow-hidden">
             <div class="gallery-card-header">
                 <span class="gallery-drag-handle" title="Arrastrar para reordenar" aria-label="Arrastrar para reordenar">
                     <i class="bi bi-grip-vertical"></i>
@@ -76,7 +49,7 @@
             <div class="card-body text-center">
                 {% if item.titulo %}<p class="mb-2 small">{{ item.titulo }}</p>{% endif %}
                 <div class="d-flex gap-2 justify-content-center">
-                    <button type="button" class="btn btn-outline-primary btn-sm"
+                    <button type="button" class="btn btn-outline-dark btn-sm"
                         data-titulo="{{ item.titulo }}"
                         data-imagen-url="{{ url_for('static', filename='uploads/gallery/' ~ item.nombre_archivo) }}"
                         data-action-url="{{ url_for('content.editar_gallery_item', id=item.id) }}"
@@ -91,11 +64,11 @@
         </div>
     </div>
     {% else %}
-    <div class="col-12"><p class="text-muted">No hay imágenes en la galería.</p></div>
+    <div class="col-12"><p class="text-secondary">No hay imágenes en la galería.</p></div>
     {% endfor %}
 </div>
 {% if items %}
-<p class="text-muted small mt-2">
+<p class="text-secondary small mt-2">
     <i class="bi bi-info-circle"></i>
     Arrastra las imágenes desde el ícono <i class="bi bi-grip-vertical"></i> para cambiar su orden. El nuevo orden se guarda automáticamente.
 </p>
@@ -104,15 +77,15 @@
 <!-- Modal: editar imagen de galería -->
 <div class="modal fade" id="editarGaleriaModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content border rounded-4">
       <form method="POST" id="formEditarGaleria" enctype="multipart/form-data">
-        <div class="modal-header">
-          <h5 class="modal-title">Editar imagen</h5>
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-semibold">Editar imagen</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3 text-center">
-            <img id="preview_imagen_edit" src="" alt="Vista previa" class="img-fluid rounded" style="max-height: 200px;">
+            <img id="preview_imagen_edit" src="" alt="Vista previa" class="img-fluid rounded-3" style="max-height: 200px;">
           </div>
           <div class="mb-3">
             <label class="form-label">Título</label>
@@ -123,9 +96,9 @@
             <input class="form-control" type="file" name="imagen" accept="image/*" onchange="previsualizarNuevaImagen(this)">
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <div class="modal-footer border-top">
+          <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-dark">Guardar cambios</button>
         </div>
       </form>
     </div>

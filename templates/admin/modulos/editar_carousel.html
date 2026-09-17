@@ -3,55 +3,28 @@
 {% block title %}Carrusel{% endblock %}
 
 {% block extra_head %}
-<style>
-.carousel-drag-handle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #f1f3f5;
-    color: #495057;
-    font-size: 1.1rem;
-    cursor: grab;
-    transition: background-color .15s ease, color .15s ease;
-    touch-action: none;
-    user-select: none;
-}
-.carousel-drag-handle:hover {
-    background-color: #dee2e6;
-    color: #212529;
-}
-.carousel-drag-handle:active {
-    cursor: grabbing;
-    background-color: #ced4da;
-}
-.carousel-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: .4rem .6rem;
-    background-color: #fff;
-    border-bottom: 1px solid rgba(0,0,0,.08);
-}
-#carouselList .sortable-ghost {
-    opacity: 0.4;
-}
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modulos_admin/editar_carousel.css') }}">
 {% endblock %}
 
 {% block content %}
-<h3>Gestor de Carrusel</h3>
+<div class="d-flex align-items-center gap-3 mb-4">
+    <div class="admin-icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center">
+        <i class="bi bi-images"></i>
+    </div>
+    <div>
+        <h3 class="fs-5 fw-semibold mb-0">Gestor de Carrusel</h3>
+        <p class="text-secondary small mb-0">Sube y ordena las imágenes del carrusel de la landing.</p>
+    </div>
+</div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
+<div class="card border shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
         <form method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label class="form-label">Subir nueva imagen (Recomendado: 1920x1080px)</label>
                 <input class="form-control" type="file" name="imagen" accept="image/*" required>
             </div>
-            <button type="submit" class="btn btn-primary">Subir Imagen</button>
+            <button type="submit" class="btn btn-dark">Subir Imagen</button>
         </form>
     </div>
 </div>
@@ -59,7 +32,7 @@
 <div class="row" id="carouselList" data-reorder-url="{{ url_for('content.reordenar_carousel') }}">
     {% for img in imagenes %}
     <div class="col-md-3 mb-3" data-id="{{ img.id }}">
-        <div class="card">
+        <div class="card border shadow-sm rounded-4 overflow-hidden">
             <div class="carousel-card-header">
                 <span class="carousel-drag-handle" title="Arrastrar para reordenar" aria-label="Arrastrar para reordenar">
                     <i class="bi bi-grip-vertical"></i>
@@ -73,11 +46,11 @@
         </div>
     </div>
     {% else %}
-    <div class="col-12"><p class="text-muted" id="emptyState">No hay imágenes en el carrusel.</p></div>
+    <div class="col-12"><p class="text-secondary" id="emptyState">No hay imágenes en el carrusel.</p></div>
     {% endfor %}
 </div>
 {% if imagenes %}
-<p class="text-muted small mt-2">
+<p class="text-secondary small mt-2">
     <i class="bi bi-info-circle"></i>
     Arrastra las imágenes desde el ícono <i class="bi bi-grip-vertical"></i> para cambiar su orden. El nuevo orden se guarda automáticamente.
 </p>

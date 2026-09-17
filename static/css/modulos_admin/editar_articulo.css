@@ -1,0 +1,9 @@
+/* ==========================================================================
+   modulos_admin/editar_articulo.css
+   Tipografía, foco/bordes en gris e ícono circular ya vienen de
+   style_admin.css (global). Acá solo lo propio de este módulo.
+   ========================================================================== */
+
+/* Sin ajustes propios por ahora: el look sale de Bootstrap (card, btn-dark,
+   form-switch) + el lenguaje visual global. Si el módulo necesita algo
+   particular más adelante, va acá. */

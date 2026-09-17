@@ -2,12 +2,27 @@
 
 {% block title %}Editar Artículo{% endblock %}
 
-{% block content %}
-<a href="{{ url_for('content.editar_blog') }}" class="btn btn-secondary mb-3">Volver al Gestor de Blog</a>
-<h3>Editar Artículo</h3>
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modulos_admin/editar_articulo.css') }}">
+{% endblock %}
 
-<div class="card shadow-sm mb-5">
-    <div class="card-body">
+{% block content %}
+<a href="{{ url_for('content.editar_blog') }}" class="btn btn-outline-dark btn-sm mb-3">
+    <i class="bi bi-arrow-left me-1"></i>Volver al Gestor de Blog
+</a>
+
+<div class="d-flex align-items-center gap-3 mb-4">
+    <div class="admin-icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center">
+        <i class="bi bi-journal-text"></i>
+    </div>
+    <div>
+        <h3 class="fs-5 fw-semibold mb-0">Editar Artículo</h3>
+        <p class="text-secondary small mb-0">Actualiza el contenido o el estado de publicación.</p>
+    </div>
+</div>
+
+<div class="card border shadow-sm rounded-4 mb-5">
+    <div class="card-body p-4">
         <form method="POST">
             <div class="mb-3">
                 <label class="form-label">Título</label>
@@ -32,10 +47,10 @@
                     Publicado (desactívalo para guardar como borrador, sin mostrarlo en la landing)
                 </label>
             </div>
-            <small class="text-muted d-block mb-3">
+            <small class="text-secondary d-block mb-3">
                 URL pública: <code>/articulo/{{ articulo.id }}</code> — no cambia al editar el título.
             </small>
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="submit" class="btn btn-dark">Guardar Cambios</button>
         </form>
     </div>
 </div>

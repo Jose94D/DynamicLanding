@@ -1,0 +1,15 @@
+/* ==========================================================================
+   modulos_admin/editar_blog.css
+   Tipografía, foco/bordes en gris e ícono circular ya vienen de
+   style_admin.css (global). Acá solo lo propio de este módulo.
+   ========================================================================== */
+
+/* --- Cada artículo publicado, como una mini-tarjeta con leve realce al hover --- */
+.editar-blog-item {
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.editar-blog-item:hover {
+    box-shadow: 0 0.35rem 0.75rem rgba(24, 24, 27, 0.06);
+    border-color: #d4d4d8 !important;
+}

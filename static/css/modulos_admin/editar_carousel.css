@@ -1,0 +1,47 @@
+/* ==========================================================================
+   modulos_admin/editar_carousel.css
+   Tipografía, foco/bordes en gris e ícono circular ya vienen de
+   style_admin.css (global). Acá lo propio de este módulo: el drag-handle
+   de las imágenes del carrusel (antes vivía en un <style> inline en el
+   HTML) recoloreado a la misma paleta gris que el drag-handle del
+   dashboard.
+   ========================================================================== */
+
+.carousel-drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #f4f4f5;
+    color: #52525b;
+    font-size: 1.1rem;
+    cursor: grab;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    touch-action: none;
+    user-select: none;
+}
+
+.carousel-drag-handle:hover {
+    background-color: #e4e4e7;
+    color: #18181b;
+}
+
+.carousel-drag-handle:active {
+    cursor: grabbing;
+    background-color: #d4d4d8;
+}
+
+.carousel-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0.6rem;
+    background-color: #fff;
+    border-bottom: 1px solid #e4e4e7;
+}
+
+#carouselList .sortable-ghost {
+    opacity: 0.4;
+}

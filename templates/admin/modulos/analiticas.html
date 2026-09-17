@@ -1,189 +1,175 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Analíticas - CMS</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-</head>
-<body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('dashboard.dashboard') }}">DynamicLanding CMS</a>
-            <div class="d-flex text-white align-items-center">
-                <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm">Cerrar Sesión</a>
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Analíticas{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modulos_admin/analiticas.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Tarjeta de resumen -->
+<div class="card border shadow-sm rounded-4 mb-4 analiticas-resumen-total">
+    <div class="card-body d-flex justify-content-between align-items-center p-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="admin-icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-bar-chart-line"></i>
             </div>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-3">
-                {% include 'admin/sidebar.html' %}
-            </div>
-
-            <div class="col-md-9">
-                <!-- Tarjeta de resumen -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-1">Visitas totales desde el lanzamiento</h6>
-                            <h2 class="fw-bold mb-0">{{ total_visitas }}</h2>
-                        </div>
-                        <i class="bi bi-bar-chart-line fs-1 text-primary"></i>
-                    </div>
-                </div>
-
-                <!-- Gráfico con selector de vista -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <h5 class="mb-0" id="chartTitle">Visitas desde el Lanzamiento</h5>
-                        <div class="btn-group" role="group" aria-label="Selector de vista del gráfico">
-                            <button type="button" class="btn btn-sm btn-primary" data-view="lanzamiento">Lanzamiento</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-view="anual">Anual</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-view="mensual">Mensual</button>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-view="semanal">Semanal</button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        {% if por_mes %}
-                        <canvas id="visitasChart" height="90"></canvas>
-                        {% else %}
-                        <p class="text-muted mb-0">Todavía no hay datos suficientes para graficar. Vuelve cuando tu sitio reciba algunas visitas.</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Tarjetas de resumen -->
-                <div class="row">
-                    <div class="col-6 col-md-3 mb-4">
-                        <div class="card shadow-sm h-100 text-center">
-                            <div class="card-body">
-                                <h6 class="text-muted mb-1">Desde el Lanzamiento</h6>
-                                <h3 class="fw-bold mb-0">{{ total_visitas }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3 mb-4">
-                        <div class="card shadow-sm h-100 text-center">
-                            <div class="card-body">
-                                <h6 class="text-muted mb-1">Este Año</h6>
-                                <h3 class="fw-bold mb-0">{{ visitas_anio_actual }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3 mb-4">
-                        <div class="card shadow-sm h-100 text-center">
-                            <div class="card-body">
-                                <h6 class="text-muted mb-1">Este Mes</h6>
-                                <h3 class="fw-bold mb-0">{{ visitas_mes_actual }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3 mb-4">
-                        <div class="card shadow-sm h-100 text-center">
-                            <div class="card-body">
-                                <h6 class="text-muted mb-1">Esta Semana</h6>
-                                <h3 class="fw-bold mb-0">{{ visitas_semana_actual }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <h6 class="text-secondary small mb-1">Visitas totales desde el lanzamiento</h6>
+                <h2 class="fw-semibold mb-0">{{ total_visitas }}</h2>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-    {% if por_mes %}
-    <script>
-        // Datos base para cada vista
-        const mesLabels = {{ por_mes | map(attribute='periodo') | list | tojson }};
-        const mesData = {{ por_mes | map(attribute='total') | list | tojson }};
+<!-- Gráfico con selector de vista -->
+<div class="card border shadow-sm rounded-4 mb-4">
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2 p-4">
+        <h5 class="fs-6 fw-semibold mb-0" id="chartTitle">Visitas desde el Lanzamiento</h5>
+        <div class="btn-group" role="group" aria-label="Selector de vista del gráfico">
+            <button type="button" class="btn btn-sm btn-dark" data-view="lanzamiento">Lanzamiento</button>
+            <button type="button" class="btn btn-sm btn-outline-dark" data-view="anual">Anual</button>
+            <button type="button" class="btn btn-sm btn-outline-dark" data-view="mensual">Mensual</button>
+            <button type="button" class="btn btn-sm btn-outline-dark" data-view="semanal">Semanal</button>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        {% if por_mes %}
+        <canvas id="visitasChart" height="90"></canvas>
+        {% else %}
+        <p class="text-secondary mb-0 analiticas-sin-datos">Todavía no hay datos suficientes para graficar. Vuelve cuando tu sitio reciba algunas visitas.</p>
+        {% endif %}
+    </div>
+</div>
 
-        // Vista "Lanzamiento": crecimiento acumulado de visitas mes a mes
-        const lanzamientoData = (() => {
-            let acumulado = 0;
-            return mesData.map(v => (acumulado += v));
-        })();
+<!-- Tarjetas de resumen -->
+<div class="row">
+    <div class="col-6 col-md-3 mb-4">
+        <div class="card border shadow-sm rounded-4 h-100 text-center analiticas-metric-card">
+            <div class="card-body">
+                <h6 class="text-secondary mb-1">Desde el Lanzamiento</h6>
+                <h3 class="fw-semibold mb-0">{{ total_visitas }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 mb-4">
+        <div class="card border shadow-sm rounded-4 h-100 text-center analiticas-metric-card">
+            <div class="card-body">
+                <h6 class="text-secondary mb-1">Este Año</h6>
+                <h3 class="fw-semibold mb-0">{{ visitas_anio_actual }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 mb-4">
+        <div class="card border shadow-sm rounded-4 h-100 text-center analiticas-metric-card">
+            <div class="card-body">
+                <h6 class="text-secondary mb-1">Este Mes</h6>
+                <h3 class="fw-semibold mb-0">{{ visitas_mes_actual }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 mb-4">
+        <div class="card border shadow-sm rounded-4 h-100 text-center analiticas-metric-card">
+            <div class="card-body">
+                <h6 class="text-secondary mb-1">Esta Semana</h6>
+                <h3 class="fw-semibold mb-0">{{ visitas_semana_actual }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-        const vistas = {
-            lanzamiento: {
-                titulo: 'Visitas desde el Lanzamiento',
-                type: 'line',
-                labels: mesLabels,
-                data: lanzamientoData
-            },
-            anual: {
-                titulo: 'Visitas por Año',
-                type: 'bar',
-                labels: {{ por_anio | map(attribute='anio') | list | tojson }},
-                data: {{ por_anio | map(attribute='total') | list | tojson }}
-            },
-            mensual: {
-                titulo: 'Visitas por Mes',
-                type: 'line',
-                labels: mesLabels,
-                data: mesData
-            },
-            semanal: {
-                titulo: 'Visitas por Semana',
-                type: 'line',
-                labels: {{ por_semana | map(attribute='periodo') | list | tojson }},
-                data: {{ por_semana | map(attribute='total') | list | tojson }}
-            }
-        };
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+{% if por_mes %}
+<script>
+    // Datos base para cada vista
+    const mesLabels = {{ por_mes | map(attribute='periodo') | list | tojson }};
+    const mesData = {{ por_mes | map(attribute='total') | list | tojson }};
 
-        const ctx = document.getElementById('visitasChart');
-        let vistaActual = 'lanzamiento';
+    // Vista "Lanzamiento": crecimiento acumulado de visitas mes a mes
+    const lanzamientoData = (() => {
+        let acumulado = 0;
+        return mesData.map(v => (acumulado += v));
+    })();
 
-        const chart = new Chart(ctx, {
-            type: vistas[vistaActual].type,
-            data: {
-                labels: vistas[vistaActual].labels,
-                datasets: [{
-                    label: 'Visitas',
-                    data: vistas[vistaActual].data,
-                    borderColor: '#0d6efd',
-                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-            }
-        });
+    const vistas = {
+        lanzamiento: {
+            titulo: 'Visitas desde el Lanzamiento',
+            type: 'line',
+            labels: mesLabels,
+            data: lanzamientoData
+        },
+        anual: {
+            titulo: 'Visitas por Año',
+            type: 'bar',
+            labels: {{ por_anio | map(attribute='anio') | list | tojson }},
+            data: {{ por_anio | map(attribute='total') | list | tojson }}
+        },
+        mensual: {
+            titulo: 'Visitas por Mes',
+            type: 'line',
+            labels: mesLabels,
+            data: mesData
+        },
+        semanal: {
+            titulo: 'Visitas por Semana',
+            type: 'line',
+            labels: {{ por_semana | map(attribute='periodo') | list | tojson }},
+            data: {{ por_semana | map(attribute='total') | list | tojson }}
+        }
+    };
 
-        const chartTitle = document.getElementById('chartTitle');
-        const botonesVista = document.querySelectorAll('[data-view]');
+    const ctx = document.getElementById('visitasChart');
+    let vistaActual = 'lanzamiento';
 
-        botonesVista.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const vista = btn.getAttribute('data-view');
-                if (vista === vistaActual) return;
-                vistaActual = vista;
+    const chart = new Chart(ctx, {
+        type: vistas[vistaActual].type,
+        data: {
+            labels: vistas[vistaActual].labels,
+            datasets: [{
+                label: 'Visitas',
+                data: vistas[vistaActual].data,
+                borderColor: '#3f3f46',
+                backgroundColor: 'rgba(63, 63, 70, 0.08)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#3f3f46'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+        }
+    });
 
-                chart.config.type = vistas[vista].type;
-                chart.data.labels = vistas[vista].labels;
-                chart.data.datasets[0].data = vistas[vista].data;
-                chart.data.datasets[0].fill = vistas[vista].type === 'line';
-                chart.update();
+    const chartTitle = document.getElementById('chartTitle');
+    const botonesVista = document.querySelectorAll('[data-view]');
 
-                chartTitle.textContent = vistas[vista].titulo;
+    botonesVista.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const vista = btn.getAttribute('data-view');
+            if (vista === vistaActual) return;
+            vistaActual = vista;
 
-                botonesVista.forEach(b => {
-                    b.classList.remove('btn-primary');
-                    b.classList.add('btn-outline-primary');
-                });
-                btn.classList.remove('btn-outline-primary');
-                btn.classList.add('btn-primary');
+            chart.config.type = vistas[vista].type;
+            chart.data.labels = vistas[vista].labels;
+            chart.data.datasets[0].data = vistas[vista].data;
+            chart.data.datasets[0].fill = vistas[vista].type === 'line';
+            chart.update();
+
+            chartTitle.textContent = vistas[vista].titulo;
+
+            botonesVista.forEach(b => {
+                b.classList.remove('btn-dark');
+                b.classList.add('btn-outline-dark');
             });
+            btn.classList.remove('btn-outline-dark');
+            btn.classList.add('btn-dark');
         });
-    </script>
-    {% endif %}
-</body>
-</html>
+    });
+</script>
+{% endif %}
+{% endblock %}

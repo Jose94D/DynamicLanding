@@ -1,0 +1,153 @@
+/* ==========================================================================
+   static/css/style_admin.css
+   Hoja de estilos GLOBAL del panel admin. Define el lenguaje visual
+   compartido (grises, Inter, foco/bordes) que consumen base_admin.html y,
+   por herencia, todos los módulos que extienden de él. Los módulos que NO
+   extienden base_admin.html (login.html, analiticas.html) la cargan aparte.
+   Los estilos particulares de cada módulo siguen viviendo en su propio
+   archivo dentro de modulos_admin/.
+   ========================================================================== */
+
+/* --- Tipografía y fondo base --- */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #fafafa;
+    /* Cuando se agregue el fondo con imagen, reemplazar la línea de arriba por:
+
+       background-color: #fafafa;
+       background-image: url("../img/fondo-admin.jpg");
+       background-size: cover;
+       background-position: center;
+       background-attachment: fixed;
+
+       No hace falta tocar nada más: las cards ya son opacas (fondo blanco)
+       y el footer ya lleva su propia placa translúcida con blur, así que
+       ambos van a mantener el contraste sin importar qué parte de la
+       imagen quede detrás. */
+}
+
+/* --- Variables de Bootstrap: foco y bordes en gris en vez del azul por defecto --- */
+:root {
+    --bs-focus-ring-color: rgba(82, 82, 91, 0.25);
+    --bs-border-color: #e4e4e7;
+}
+
+/* --- Sidebar: estado activo/hover en gris carbón, coherente con btn-dark --- */
+.list-group-item.active {
+    background-color: #27272a;
+    border-color: #27272a;
+    color: #fff;
+}
+
+.list-group-item-action:hover:not(.active) {
+    background-color: #f4f4f5;
+}
+
+.list-group-item-action:focus {
+    box-shadow: none;
+}
+
+/* --- Ícono circular reutilizable: headers de módulo (cambiar_password, analiticas, etc.) --- */
+.admin-icon-circle {
+    width: 48px;
+    height: 48px;
+    font-size: 1.1rem;
+}
+
+/* --- Editor Quill: mismo fix que antes vivía inline en base_admin.html.
+   .ql-container define height: 100% por defecto, pero el contenedor donde
+   se monta no tiene altura fija, así que el editor se sobrepone al
+   contenido siguiente (por ejemplo, el botón de enviar). Forzamos altura
+   automática y una altura mínima razonable. --- */
+.ql-container {
+    height: auto;
+}
+
+.ql-editor {
+    min-height: 100px;
+    height: auto;
+}
+
+/* --- Dashboard: fila arrastrable de módulos (antes inline en dashboard.html) --- */
+#tabla-modulos tr.sortable-ghost {
+    opacity: 0.4;
+    background-color: #f4f4f5;
+}
+
+.drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #f4f4f5;
+    color: #52525b;
+    font-size: 1.3rem;
+    cursor: grab;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    touch-action: none;
+    user-select: none;
+}
+
+.drag-handle:hover {
+    background-color: #e4e4e7;
+    color: #18181b;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+    background-color: #d4d4d8;
+}
+
+/* --- Layout: footer siempre al fondo, aunque el contenido sea corto --- */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-content-wrap {
+    flex: 1 0 auto;
+}
+
+/* --- Footer del panel admin ---
+   El fondo de la página va a ser una imagen (olas en gris, sin un tono
+   único: hay zonas casi blancas y zonas gris medio). En vez de intentar
+   adivinar un gris de texto que contraste en todas las zonas de la imagen,
+   le damos al footer su propia placa semi-opaca con blur ("vidrio
+   esmerilado"): así el contraste queda garantizado sin importar qué parte
+   de la imagen quede detrás. */
+.admin-footer {
+    flex-shrink: 0;
+    background-color: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(228, 228, 231, 0.9);
+    padding: 1.1rem 0;
+    margin-top: 2.5rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #52525b;
+}
+
+.admin-footer a {
+    color: #18181b;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-footer a:hover {
+    color: #000;
+    border-bottom-color: #a1a1aa;
+}
+
+/* --- Login: tarjeta angosta centrada (standalone, no extiende base_admin) --- */
+.login-card {
+    max-width: 400px;
+}
