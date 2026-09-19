@@ -2,11 +2,23 @@
 
 {% block title %}Testimonios{% endblock %}
 
-{% block content %}
-<h3>Gestor de Testimonios de Clientes</h3>
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modulos_admin/editar_testimonials.css') }}">
+{% endblock %}
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
+{% block content %}
+<div class="d-flex align-items-center gap-3 mb-4">
+    <div class="admin-icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center">
+        <i class="bi bi-chat-quote"></i>
+    </div>
+    <div>
+        <h3 class="fs-5 fw-semibold mb-0">Gestor de Testimonios de Clientes</h3>
+        <p class="text-secondary small mb-0">Agrega y edita los testimonios que se muestran en el sitio.</p>
+    </div>
+</div>
+
+<div class="card border shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
         <form method="POST" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-4 mb-3">
@@ -17,7 +29,7 @@
                     <label class="form-label">Cargo / Empresa (opcional)</label>
                     <input class="form-control" type="text" name="cargo">
                 </div>
-                <div class="col-md-2 mb-3">
+                <div class="col-md-4 mb-3">
                     <label class="form-label">Calificación</label>
                     <select class="form-select" name="calificacion">
                         <option value="5" selected>5 estrellas</option>
@@ -27,35 +39,126 @@
                         <option value="1">1 estrella</option>
                     </select>
                 </div>
-                <div class="col-md-2 mb-3">
-                    <label class="form-label">Orden</label>
-                    <input class="form-control" type="number" name="orden" value="1" min="1">
-                </div>
                 <div class="col-md-8 mb-3">
                     <label class="form-label">Testimonio</label>
-                    <textarea class="form-control" name="texto" rows="2" required></textarea>
+                    <textarea class="form-control" name="texto" id="texto-add-textarea" rows="2" required></textarea>
+                    <div id="texto-add-editor" style="display:none;"></div>
+                    <div id="texto-add-error" class="text-danger small mt-1" style="display:none;">
+                        Este campo no puede quedar vacío.
+                    </div>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Foto (opcional)</label>
                     <input class="form-control" type="file" name="foto" accept="image/*">
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Agregar Testimonio</button>
+            <button type="submit" class="btn btn-dark">Agregar Testimonio</button>
         </form>
     </div>
 </div>
 
-<div class="list-group">
+<div class="row" id="testimonialsList" data-reorder-url="{{ url_for('content.reordenar_testimonials') }}">
     {% for t in testimonios %}
-    <div class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-            <strong>{{ t.nombre }}</strong>{% if t.cargo %} — <span class="text-muted">{{ t.cargo }}</span>{% endif %}
-            <br><small class="text-muted">"{{ t.texto }}" ({{ t.calificacion }}★, orden: {{ t.orden }})</small>
+    <div class="col-md-4 mb-3" data-id="{{ t.id }}">
+        <div class="card border shadow-sm rounded-4 overflow-hidden h-100">
+            <div class="testimonial-card-header">
+                <span class="testimonial-drag-handle" title="Arrastrar para reordenar" aria-label="Arrastrar para reordenar">
+                    <i class="bi bi-grip-vertical"></i>
+                </span>
+                <span class="badge bg-secondary orden-badge">Orden: {{ t.orden }}</span>
+            </div>
+            <div class="card-body text-center d-flex flex-column">
+                {% if t.foto %}
+                <img src="{{ url_for('static', filename='uploads/testimonials/' ~ t.foto) }}" class="testimonial-avatar rounded-circle mx-auto mb-3" alt="{{ t.nombre }}">
+                {% else %}
+                <div class="testimonial-avatar testimonial-avatar-placeholder rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                {% endif %}
+
+                <strong>{{ t.nombre }}</strong>
+                {% if t.cargo %}<p class="text-secondary small mb-2">{{ t.cargo }}</p>{% else %}<div class="mb-2"></div>{% endif %}
+
+                <div class="testimonial-stars mb-2">
+                    {% for i in range(1, 6) %}
+                        {% if i <= t.calificacion %}
+                        <i class="bi bi-star-fill"></i>
+                        {% else %}
+                        <i class="bi bi-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <blockquote class="testimonial-quote text-secondary small flex-grow-1">
+                    {{ t.texto | safe }}
+                </blockquote>
+
+                <div class="d-flex justify-content-center align-items-center gap-2 mt-2">
+                    <a href="{{ url_for('content.eliminar_testimonial', id=t.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar testimonio?')">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </a>
+                </div>
+            </div>
         </div>
-        <a href="{{ url_for('content.eliminar_testimonial', id=t.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar testimonio?')">Eliminar</a>
     </div>
     {% else %}
-    <p class="text-muted">No hay testimonios registrados.</p>
+    <div class="col-12"><p class="text-secondary">No hay testimonios registrados.</p></div>
     {% endfor %}
 </div>
+{% if testimonios %}
+<p class="text-secondary small mt-2">
+    <i class="bi bi-info-circle"></i>
+    Arrastra los testimonios desde el ícono <i class="bi bi-grip-vertical"></i> para cambiar su orden. El nuevo orden se guarda automáticamente.
+</p>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script>
+inicializarEditorEnriquecido({
+    textareaId: 'texto-add-textarea',
+    editorId: 'texto-add-editor',
+    errorId: 'texto-add-error',
+    placeholder: 'Escribe el testimonio del cliente...',
+    toolbar: [
+        ['bold', 'italic', 'underline'],
+        ['clean']
+    ]
+});
+
+const testimonialsList = document.getElementById('testimonialsList');
+if (testimonialsList && testimonialsList.querySelector('[data-id]')) {
+    new Sortable(testimonialsList, {
+        handle: '.testimonial-drag-handle',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: function () {
+            const ids = Array.from(testimonialsList.children)
+                .filter(el => el.dataset && el.dataset.id)
+                .map(el => el.dataset.id);
+
+            fetch(testimonialsList.dataset.reorderUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orden: ids })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.ok) {
+                    Array.from(testimonialsList.children).forEach((el, idx) => {
+                        if (el.dataset && el.dataset.id) {
+                            const badge = el.querySelector('.orden-badge');
+                            if (badge) badge.textContent = 'Orden: ' + (idx + 1);
+                        }
+                    });
+                } else {
+                    alert('No se pudo guardar el nuevo orden. Intenta de nuevo.');
+                }
+            })
+            .catch(() => alert('Error de conexión al guardar el nuevo orden.'));
+        }
+    });
+}
+</script>
 {% endblock %}

@@ -1,26 +1,41 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modulos_public/blog_preview.css') }}">
 {% if blog %}
-<section class="py-5 bg-light" id="noticias">
+<section class="blog-preview-section" id="noticias">
     <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-lg-8 mx-auto">
-                <h2 class="fw-bold">Últimas Novedades</h2>
-                <p class="lead text-muted">Mantente al tanto de nuestras actualizaciones.</p>
+        <div class="blog-header mb-5">
+            <div class="blog-eyebrow">
+                <span>Blog</span>
+                <i></i>
             </div>
+            <h2 class="section-title">Últimas novedades</h2>
+            <p class="section-subtitle">Mantente al tanto de nuestras actualizaciones.</p>
         </div>
-        
-        <div class="row g-4">
+
+        <div class="row g-4 g-md-0">
             {% for articulo in blog %}
             <div class="col-md-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold">{{ articulo.titulo }}</h5>
-                        <h6 class="card-subtitle mb-3 text-muted" style="font-size: 0.85rem;">{{ articulo.fecha_publicacion }}</h6>
-                        <p class="card-text text-muted flex-grow-1">{{ articulo.extracto }}</p>
-                        <a href="{{ url_for('public.ver_articulo', id=articulo.id) }}" class="btn btn-outline-primary mt-3 align-self-start">Leer más</a>
+                <article class="blog-item h-100 d-flex flex-column">
+                    <div class="blog-item-meta">
+                        {% if articulo.categoria %}
+                        <span class="blog-item-categoria">{{ articulo.categoria }}</span>
+                        <i></i>
+                        {% endif %}
+                        <span class="blog-item-date">{{ articulo.fecha_publicacion }}</span>
                     </div>
-                </div>
+                    <h3 class="blog-item-title">{{ articulo.titulo }}</h3>
+                    <div class="blog-item-excerpt flex-grow-1">{{ articulo.extracto | safe }}</div>
+                    <a href="{{ url_for('public.ver_articulo', id=articulo.id) }}" class="blog-item-link">
+                        Leer más <span aria-hidden="true">→</span>
+                    </a>
+                </article>
             </div>
             {% endfor %}
+        </div>
+
+        <div class="blog-footer-link">
+            <i></i>
+            <a href="{{ url_for('public.blog_archivo') }}">Ver todos los artículos <span aria-hidden="true">→</span></a>
+            <i></i>
         </div>
     </div>
 </section>

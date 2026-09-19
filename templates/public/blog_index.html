@@ -1,0 +1,91 @@
+{% extends "public/base.html" %}
+
+{% block title %}Blog{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style_blog.css') }}">
+{% endblock %}
+
+{% block content %}
+<header class="blog-archive-hero">
+    <div class="container">
+        <span class="section-label">Blog</span>
+        <h1 class="blog-archive-title">Todas las novedades</h1>
+        <p class="blog-archive-subtitle">Explora los artículos publicados, del más reciente al más antiguo.</p>
+    </div>
+</header>
+
+<div class="container blog-archive-body">
+    <div class="row gx-5">
+        <!-- Barra lateral: archivo por mes -->
+        <aside class="col-lg-3 mb-5">
+            <div class="blog-archive-sidebar">
+                <h2 class="blog-sidebar-title">Archivo</h2>
+                {% if grupos %}
+                <ul class="blog-sidebar-list">
+                    {% for grupo in grupos %}
+                    <li>
+                        <a href="#{{ grupo.key }}" class="blog-sidebar-link" data-target="{{ grupo.key }}">
+                            <span>{{ grupo.label }}</span>
+                            <span class="blog-sidebar-count">{{ grupo.articulos|length }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="blog-sidebar-empty">Aún no hay artículos.</p>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Artículos agrupados por mes -->
+        <div class="col-lg-9">
+            {% for grupo in grupos %}
+            <section class="blog-month-group" id="{{ grupo.key }}">
+                <h3 class="blog-month-heading">{{ grupo.label }}</h3>
+
+                {% for articulo in grupo.articulos %}
+                <article class="blog-archive-item">
+                    <span class="blog-archive-date">{{ articulo.fecha_publicacion }}</span>
+                    <h4 class="blog-archive-item-title">
+                        <a href="{{ url_for('public.ver_articulo', id=articulo.id) }}">{{ articulo.titulo }}</a>
+                    </h4>
+                    <div class="blog-archive-excerpt">{{ articulo.extracto | safe }}</div>
+                    <a href="{{ url_for('public.ver_articulo', id=articulo.id) }}" class="blog-archive-link">
+                        Leer más <span aria-hidden="true">→</span>
+                    </a>
+                </article>
+                {% endfor %}
+            </section>
+            {% else %}
+            <p class="text-muted">Todavía no hay artículos publicados.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Resalta en la barra lateral el mes que se está viendo actualmente
+(function () {
+    const sections = document.querySelectorAll('.blog-month-group');
+    const links = document.querySelectorAll('.blog-sidebar-link');
+    if (!sections.length || !links.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                links.forEach((link) => link.classList.remove('active'));
+                const activeLink = document.querySelector(
+                    '.blog-sidebar-link[data-target="' + entry.target.id + '"]'
+                );
+                if (activeLink) activeLink.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+
+    sections.forEach((section) => observer.observe(section));
+})();
+</script>
+{% endblock %}

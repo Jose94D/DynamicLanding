@@ -16,7 +16,9 @@
     <div class="admin-content-wrap">
         <nav class="navbar navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('dashboard.dashboard') }}">DynamicLanding CMS</a>
+                <a class="navbar-brand" href="{{ url_for('dashboard.dashboard') }}">
+                    <img src="{{ url_for('static', filename='admin/img/header-logo.png') }}" alt="DynamicLanding CMS" height="32">
+                </a>
                 <div class="d-flex text-white align-items-center">
                     {% if current_user.is_authenticated %}
                     <span class="me-3">Hola, {{ current_user.username }}</span>

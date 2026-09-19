@@ -1,0 +1,187 @@
+/* ==========================================================
+   Estilos específicos de la página de artículo del blog.
+   El navbar y el footer vienen de base.html (compartidos con
+   el resto del sitio). La sidebar es la pieza predominante del
+   layout, junto al título/fecha/contenido, todo alineado a la
+   izquierda para mantener coherencia con el resto del módulo.
+   ========================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --site-dark: #16261f;
+    --site-dark-2: #1d332b;
+    --site-cream: #f5f1e8;
+    --site-accent: #c9a768;
+    --site-text: #22302a;
+    --site-muted: #6f6b60;
+    --site-line: rgba(22, 38, 31, .14);
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--site-cream);
+    color: var(--site-text);
+}
+
+.post-body {
+    padding: 4rem 0 5rem;
+}
+
+/* Título y fecha, ahora alineados a la izquierda junto al contenido
+   (ya no en un hero centrado aparte) */
+.post-header {
+    margin-bottom: 2rem;
+}
+.section-label {
+    display: inline-block;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--site-accent);
+    margin-bottom: .75rem;
+}
+.post-title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: var(--site-text);
+    margin-bottom: .75rem;
+    line-height: 1.2;
+}
+.post-meta {
+    color: var(--site-muted);
+    font-size: .95rem;
+    margin-bottom: 0;
+}
+
+/* Sidebar: coherente con el estilo plano y editorial del listado
+   (style_blog.css) — sin cajas ni sombras, solo tipografía y líneas finas.
+   Su predominancia viene del ancho de columna y del orden en la página,
+   no de un tratamiento visual "de tarjeta". */
+.blog-archive-sidebar {
+    position: sticky;
+    top: 2rem;
+}
+.blog-sidebar-title {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--site-text);
+    margin-bottom: 1rem;
+}
+.blog-sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--site-line);
+}
+.blog-sidebar-list li {
+    border-bottom: 1px solid var(--site-line);
+}
+.blog-sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .75rem .1rem;
+    color: var(--site-muted);
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 500;
+    transition: color .15s ease, padding-left .15s ease;
+}
+.blog-sidebar-link:hover {
+    color: var(--site-text);
+}
+.blog-sidebar-link.active {
+    color: var(--site-dark);
+    font-weight: 600;
+    padding-left: .4rem;
+    border-left: 2px solid var(--site-accent);
+}
+.blog-sidebar-count {
+    font-size: .75rem;
+    color: var(--site-muted);
+    background-color: rgba(22, 38, 31, .06);
+    border-radius: 999px;
+    padding: .1rem .5rem;
+}
+.blog-sidebar-empty {
+    color: var(--site-muted);
+    font-size: .9rem;
+}
+
+@media (max-width: 991.98px) {
+    .blog-archive-sidebar {
+        position: static;
+    }
+}
+
+/* Tarjeta del artículo */
+.post-card {
+    background-color: #fff;
+    border-radius: 18px;
+    box-shadow: 0 20px 45px rgba(22, 38, 31, .08);
+    padding: 3.5rem;
+}
+@media (max-width: 576px) {
+    .post-card {
+        padding: 2rem;
+    }
+}
+
+.post-content {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--site-text);
+}
+.post-content p {
+    margin-bottom: 1.5rem;
+}
+.post-content h2,
+.post-content h3 {
+    font-family: var(--font-serif);
+    color: var(--site-text);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+.post-content a {
+    color: var(--site-dark-2);
+    text-decoration: underline;
+    text-decoration-color: var(--site-accent);
+    text-underline-offset: 3px;
+}
+.post-content blockquote {
+    border-left: 3px solid var(--site-accent);
+    padding-left: 1.25rem;
+    font-style: italic;
+    color: var(--site-muted);
+    margin: 2rem 0;
+}
+.post-content img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+}
+
+/* Botón "Volver al blog" */
+.post-return-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem 1.5rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--site-dark);
+    color: var(--site-dark);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: .85rem;
+    transition: background-color .15s ease, color .15s ease;
+}
+.post-return-btn:hover {
+    background-color: var(--site-dark);
+    color: #fff;
+}

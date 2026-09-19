@@ -12,18 +12,10 @@
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: #fafafa;
-    /* Cuando se agregue el fondo con imagen, reemplazar la línea de arriba por:
-
-       background-color: #fafafa;
-       background-image: url("../img/fondo-admin.jpg");
-       background-size: cover;
-       background-position: center;
-       background-attachment: fixed;
-
-       No hace falta tocar nada más: las cards ya son opacas (fondo blanco)
-       y el footer ya lleva su propia placa translúcida con blur, así que
-       ambos van a mantener el contraste sin importar qué parte de la
-       imagen quede detrás. */
+    background-image: url("../admin/img/admin-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 /* --- Variables de Bootstrap: foco y bordes en gris en vez del azul por defecto --- */
@@ -150,4 +142,10 @@ body {
 /* --- Login: tarjeta angosta centrada (standalone, no extiende base_admin) --- */
 .login-card {
     max-width: 400px;
+}
+
+.login-logo {
+    max-width: 220px;
+    width: 100%;
+    height: auto;
 }

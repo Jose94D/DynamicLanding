@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, current_app
+from flask import render_template, request, redirect, url_for, flash, current_app, jsonify
 from flask_login import login_required
 
 from extensions import get_db_connection
@@ -20,7 +20,13 @@ def editar_testimonials():
         cargo = request.form.get('cargo', '')
         texto = request.form['texto']
         calificacion = request.form.get('calificacion', 5, type=int)
-        orden = request.form.get('orden', 1, type=int)
+
+        # El orden ya no se ingresa manualmente: el nuevo testimonio se
+        # agrega al final de la lista (orden = último orden + 1).
+        ultimo_orden = conn.execute(
+            'SELECT COALESCE(MAX(orden), 0) AS max_orden FROM contenido_testimonials'
+        ).fetchone()['max_orden']
+        orden = ultimo_orden + 1
 
         foto_filename = None
         file = request.files.get('foto')
@@ -62,3 +68,24 @@ def eliminar_testimonial(id):
     conn.close()
     flash("Testimonio eliminado.", "success")
     return redirect(url_for('content.editar_testimonials'))
+
+
+@content_bp.route('/testimonials/reordenar', methods=['POST'])
+@login_required
+def reordenar_testimonials():
+    data = request.get_json(silent=True) or {}
+    ids = data.get('orden', [])
+
+    if not ids:
+        return jsonify({'ok': False}), 400
+
+    conn = get_db_connection()
+    for posicion, item_id in enumerate(ids, start=1):
+        conn.execute(
+            'UPDATE contenido_testimonials SET orden = ? WHERE id = ?',
+            (posicion, item_id)
+        )
+    conn.commit()
+    conn.close()
+
+    return jsonify({'ok': True})

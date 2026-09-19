@@ -1,0 +1,18 @@
+.admin-icon-circle {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    font-size: 1.3rem;
+}
+
+.mensaje-card {
+    transition: box-shadow .15s ease;
+}
+.mensaje-card:hover {
+    box-shadow: 0 .25rem .5rem rgba(0, 0, 0, .08) !important;
+}
+
+.mensaje-no-leido {
+    background-color: #f8f9ff;
+    border-color: rgba(13, 110, 253, .25) !important;
+}

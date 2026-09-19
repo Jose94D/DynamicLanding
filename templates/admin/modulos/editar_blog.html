@@ -26,7 +26,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Extracto (Resumen para la landing)</label>
-                <textarea class="form-control" name="extracto" rows="2" required></textarea>
+                <textarea class="form-control" name="extracto" id="extracto-textarea" rows="2" required></textarea>
+                <div id="extracto-editor" style="display:none;"></div>
+                <div id="extracto-error" class="text-danger small mt-1" style="display:none;">
+                    El extracto no puede quedar vacío.
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Contenido Completo</label>
@@ -69,6 +73,17 @@
 
 {% block extra_scripts %}
 <script>
+    inicializarEditorEnriquecido({
+        textareaId: 'extracto-textarea',
+        editorId: 'extracto-editor',
+        errorId: 'extracto-error',
+        placeholder: 'Escribe un resumen breve del artículo...',
+        toolbar: [
+            ['bold', 'italic', 'underline'],
+            ['clean']
+        ]
+    });
+
     inicializarEditorEnriquecido({
         textareaId: 'contenido-textarea',
         editorId: 'contenido-editor',

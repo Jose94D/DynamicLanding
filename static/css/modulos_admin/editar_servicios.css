@@ -1,0 +1,110 @@
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 6px;
+    max-height: 55vh;
+    overflow-y: auto;
+}
+.icon-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 4px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    transition: background-color .1s ease, border-color .1s ease;
+    text-align: center;
+}
+.icon-option:hover {
+    background: #f0f4ff;
+    border-color: #0d6efd;
+}
+.icon-option i {
+    font-size: 1.4rem;
+}
+.icon-option small {
+    font-size: 0.65rem;
+    color: #6c757d;
+    word-break: break-all;
+    line-height: 1.1;
+}
+.drag-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 1.3rem;
+    cursor: grab;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    touch-action: none;
+    user-select: none;
+    flex-shrink: 0;
+}
+.drag-handle:hover {
+    background-color: #dee2e6;
+    color: #212529;
+}
+.drag-handle:active {
+    cursor: grabbing;
+    background-color: #ced4da;
+}
+#serviciosList .sortable-ghost {
+    opacity: 0.4;
+    background-color: #e9ecef;
+}
+/* La descripción guardada trae HTML de Quill (envuelto en <p>, <ul>, etc.).
+   Para mostrarla en la vista previa del admin tal como se vería en el sitio
+   público (negrita, cursiva, subrayado...) pero sin que esas etiquetas de
+   bloque rompan la línea "título - descripción", forzamos que se comporten
+   como texto en línea. */
+.desc-preview p,
+.desc-preview ul,
+.desc-preview ol,
+.desc-preview li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+.desc-preview li:not(:last-child)::after {
+    content: ", ";
+}
+.icon-trigger {
+    cursor: pointer;
+    transition: background-color .15s ease;
+}
+.icon-trigger:hover {
+    background-color: #eef2ff;
+}
+.admin-icon-circle {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    font-size: 1.3rem;
+}
+#serviciosList .list-group-item {
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 1rem !important;
+    margin-bottom: .75rem;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .06);
+    transition: box-shadow .15s ease;
+}
+#serviciosList .list-group-item:hover {
+    box-shadow: 0 .25rem .5rem rgba(0, 0, 0, .08);
+}
+#serviciosList .list-group-item:last-child {
+    margin-bottom: 0;
+}
+.servicio-icon-circle {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+}

@@ -3,107 +3,29 @@
 {% block title %}Servicios{% endblock %}
 
 {% block extra_head %}
-<style>
-.icon-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 6px;
-    max-height: 55vh;
-    overflow-y: auto;
-}
-.icon-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 10px 4px;
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    background: #fff;
-    cursor: pointer;
-    transition: background-color .1s ease, border-color .1s ease;
-    text-align: center;
-}
-.icon-option:hover {
-    background: #f0f4ff;
-    border-color: #0d6efd;
-}
-.icon-option i {
-    font-size: 1.4rem;
-}
-.icon-option small {
-    font-size: 0.65rem;
-    color: #6c757d;
-    word-break: break-all;
-    line-height: 1.1;
-}
-.drag-handle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: #f1f3f5;
-    color: #495057;
-    font-size: 1.3rem;
-    cursor: grab;
-    transition: background-color 0.15s ease, color 0.15s ease;
-    touch-action: none;
-    user-select: none;
-    flex-shrink: 0;
-}
-.drag-handle:hover {
-    background-color: #dee2e6;
-    color: #212529;
-}
-.drag-handle:active {
-    cursor: grabbing;
-    background-color: #ced4da;
-}
-#serviciosList .sortable-ghost {
-    opacity: 0.4;
-    background-color: #e9ecef;
-}
-/* La descripción guardada trae HTML de Quill (envuelto en <p>, <ul>, etc.).
-   Para mostrarla en la vista previa del admin tal como se vería en el sitio
-   público (negrita, cursiva, subrayado...) pero sin que esas etiquetas de
-   bloque rompan la línea "título - descripción", forzamos que se comporten
-   como texto en línea. */
-.desc-preview p,
-.desc-preview ul,
-.desc-preview ol,
-.desc-preview li {
-    display: inline;
-    margin: 0;
-    padding: 0;
-}
-.desc-preview li:not(:last-child)::after {
-    content: ", ";
-}
-.icon-trigger {
-    cursor: pointer;
-    transition: background-color .15s ease;
-}
-.icon-trigger:hover {
-    background-color: #eef2ff;
-}
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modulos_admin/editar_servicios.css') }}">
 {% endblock %}
 
 {% block content %}
-<h3>Gestor de Servicios / Características</h3>
+<div class="d-flex align-items-center gap-3 mb-4">
+    <div class="admin-icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center">
+        <i class="bi bi-stars"></i>
+    </div>
+    <div>
+        <h3 class="fs-5 fw-semibold mb-0">Gestor de Servicios / Características</h3>
+        <p class="text-secondary small mb-0">Agrega, ordena y edita los servicios que se muestran en el sitio.</p>
+    </div>
+</div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
+<div class="card border shadow-sm rounded-4 mb-4">
+    <div class="card-body p-4">
         <form method="POST">
             <div class="row">
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Icono</label>
                     <div class="input-group">
                         <span class="input-group-text bg-white icon-trigger" role="button" tabindex="0" title="Elegir ícono" onclick="abrirIconPicker('icono_add', 'icono_add_preview')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirIconPicker('icono_add', 'icono_add_preview');}">
-                            <i id="icono_add_preview" class="bi bi-star fs-5 text-primary"></i>
+                            <i id="icono_add_preview" class="bi bi-star fs-5 text-dark"></i>
                         </span>
                         <input class="form-control" type="text" id="icono_add" name="icono" value="bi-star" readonly required>
                     </div>
@@ -121,34 +43,36 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Agregar Servicio</button>
+            <button type="submit" class="btn btn-dark">Agregar Servicio</button>
         </form>
     </div>
 </div>
 
-<div class="list-group"
+<div class="list-group list-group-flush"
      id="serviciosList"
      data-reorder-url="{{ url_for('content.reordenar_servicios') }}"
      data-edit-url-base="{{ url_for('content.editar_servicio', id=999999999) }}">
     {% for s in servicios %}
-    <div class="list-group-item d-flex justify-content-between align-items-center"
+    <div class="list-group-item d-flex justify-content-between align-items-center bg-white"
          data-id="{{ s.id }}"
          data-icono="{{ s.icono }}"
          data-titulo="{{ s.titulo }}"
          data-descripcion="{{ s.descripcion }}"
          data-orden="{{ s.orden }}">
-        <div class="d-flex align-items-center">
-            <span class="drag-handle me-3" title="Arrastrar para reordenar" aria-label="Arrastrar para reordenar">
+        <div class="d-flex align-items-center gap-3">
+            <span class="drag-handle" title="Arrastrar para reordenar" aria-label="Arrastrar para reordenar">
                 <i class="bi bi-grip-vertical"></i>
             </span>
-            <i class="bi {{ s.icono }} fs-4 me-3 text-primary"></i>
+            <div class="servicio-icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi {{ s.icono }} text-dark"></i>
+            </div>
             <div>
-                <strong>{{ s.titulo }}</strong> - <span class="desc-preview">{{ s.descripcion | safe }}</span>
+                <strong>{{ s.titulo }}</strong> <span class="text-secondary">-</span> <span class="desc-preview text-secondary">{{ s.descripcion | safe }}</span>
             </div>
         </div>
         <div class="d-flex gap-2 align-items-center flex-shrink-0">
             <span class="badge bg-secondary orden-badge">Orden: {{ s.orden }}</span>
-            <button type="button" class="btn btn-outline-primary btn-sm" onclick="abrirEditarServicio(this)">
+            <button type="button" class="btn btn-outline-dark btn-sm" onclick="abrirEditarServicio(this)">
                 <i class="bi bi-pencil-square"></i> Editar
             </button>
             <a href="{{ url_for('content.eliminar_servicio', id=s.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar servicio?')">
@@ -157,16 +81,16 @@
         </div>
     </div>
     {% else %}
-    <p class="text-muted" id="emptyState">No hay servicios registrados.</p>
+    <p class="text-secondary" id="emptyState">No hay servicios registrados.</p>
     {% endfor %}
 </div>
 {% if servicios %}
-<p class="text-muted small mt-2">
+<p class="text-secondary small mt-3">
     <i class="bi bi-info-circle"></i>
     Arrastra los servicios desde el ícono <i class="bi bi-grip-vertical"></i> para cambiar su orden. El nuevo orden se guarda automáticamente.
 </p>
 {% endif %}
-<p class="text-muted small">
+<p class="text-secondary small">
     <i class="bi bi-exclamation-triangle"></i>
     Se recomienda un máximo de <strong>5 servicios</strong> para no romper el diseño del módulo en la página de inicio.
 </p>
@@ -174,10 +98,10 @@
 <!-- Modal: editar servicio -->
 <div class="modal fade" id="editServicioModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content border rounded-4">
       <form method="POST" id="editServicioForm">
-        <div class="modal-header">
-          <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Editar servicio</h5>
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-semibold"><i class="bi bi-pencil-square me-2"></i>Editar servicio</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
@@ -185,7 +109,7 @@
             <label class="form-label">Icono</label>
             <div class="input-group">
               <span class="input-group-text bg-white icon-trigger" role="button" tabindex="0" title="Elegir ícono" onclick="abrirIconPicker('icono_edit', 'icono_edit_preview')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirIconPicker('icono_edit', 'icono_edit_preview');}">
-                <i id="icono_edit_preview" class="bi bi-star fs-5 text-primary"></i>
+                <i id="icono_edit_preview" class="bi bi-star fs-5 text-dark"></i>
               </span>
               <input class="form-control" type="text" id="icono_edit" name="icono" readonly required>
             </div>
@@ -203,9 +127,9 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <div class="modal-footer border-top">
+          <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-dark">Guardar cambios</button>
         </div>
       </form>
     </div>
@@ -215,15 +139,15 @@
 <!-- Modal: elegir ícono -->
 <div class="modal fade" id="iconPickerModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><i class="bi bi-grid-3x3-gap me-2"></i>Elegir un ícono</h5>
+    <div class="modal-content border rounded-4">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-semibold"><i class="bi bi-grid-3x3-gap me-2"></i>Elegir un ícono</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
         <input type="text" id="iconSearchInput" class="form-control mb-3" placeholder="Buscar ícono (ej: telefono, casa, estrella, reloj)...">
         <div id="iconGrid" class="icon-grid"></div>
-        <p id="iconNoResults" class="text-muted text-center mt-3 d-none">No se encontraron íconos con ese nombre. Puedes buscar el nombre exacto en <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a>.</p>
+        <p id="iconNoResults" class="text-secondary text-center mt-3 d-none">No se encontraron íconos con ese nombre. Puedes buscar el nombre exacto en <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a>.</p>
       </div>
     </div>
   </div>
@@ -354,7 +278,7 @@ function seleccionarIcono(icono) {
         currentIconTargetInput.value = icono;
     }
     if (currentIconTargetPreview) {
-        currentIconTargetPreview.className = 'bi ' + icono + ' fs-5 text-primary';
+        currentIconTargetPreview.className = 'bi ' + icono + ' fs-5 text-dark';
     }
     const modalEl = document.getElementById('iconPickerModal');
     bootstrap.Modal.getOrCreateInstance(modalEl).hide();
@@ -371,7 +295,7 @@ function abrirEditarServicio(btn) {
     const item = btn.closest('.list-group-item');
 
     document.getElementById('icono_edit').value = item.dataset.icono;
-    document.getElementById('icono_edit_preview').className = 'bi ' + item.dataset.icono + ' fs-5 text-primary';
+    document.getElementById('icono_edit_preview').className = 'bi ' + item.dataset.icono + ' fs-5 text-dark';
     document.getElementById('titulo_edit').value = item.dataset.titulo;
     actualizarContenidoEditorEnriquecido('descripcion_edit', item.dataset.descripcion);
 
