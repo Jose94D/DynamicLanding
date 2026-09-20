@@ -81,6 +81,14 @@ def index():
     ''').fetchall()
     about_data = conn.execute('SELECT * FROM contenido_about WHERE id = 1').fetchone()
 
+    # --- Módulo Contáctanos: orden/visibilidad de sus 3 sub-módulos internos
+    # (mensajes / mapa / datos), más el contenido de cada uno. ---
+    contact_submodulos = conn.execute(
+        'SELECT * FROM contenido_contact_submodulos ORDER BY orden ASC'
+    ).fetchall()
+    contact_datos = conn.execute('SELECT * FROM contenido_contact_datos WHERE id = 1').fetchone()
+    contact_mapa = conn.execute('SELECT * FROM contenido_contact_mapa WHERE id = 1').fetchone()
+
     conn.close()
     return render_template(
         'public/index.html',
@@ -92,7 +100,10 @@ def index():
         gallery=gallery_data,
         testimonials=testimonials_data,
         blog=blog_data,
-        about=about_data
+        about=about_data,
+        contact_submodulos=contact_submodulos,
+        contact_datos=contact_datos,
+        contact_mapa=contact_mapa
     )
 
 

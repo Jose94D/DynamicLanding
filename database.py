@@ -119,6 +119,40 @@ def inicializar_base_datos():
         )
     ''')
 
+    # --- Contáctanos: orden/visibilidad de los 3 sub-módulos internos
+    # (mensajes / mapa / datos). Mismo patrón que la tabla 'modulos',
+    # pero acotado a este módulo para no mezclar ambos drag&drop. ---
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS contenido_contact_submodulos (
+            id TEXT PRIMARY KEY,
+            nombre_legible TEXT NOT NULL,
+            activo INTEGER NOT NULL DEFAULT 1,
+            orden INTEGER NOT NULL
+        )
+    ''')
+
+    # --- Contáctanos: datos de contacto (singleton: siempre id = 1) ---
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS contenido_contact_datos (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            titulo TEXT NOT NULL DEFAULT 'Hablemos',
+            subtitulo TEXT,
+            telefono TEXT,
+            email TEXT,
+            ubicacion_texto TEXT,
+            horario TEXT
+        )
+    ''')
+
+    # --- Contáctanos: dirección usada por el mapa embebido de Google Maps
+    # (singleton: siempre id = 1) ---
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS contenido_contact_mapa (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            direccion TEXT NOT NULL
+        )
+    ''')
+
     # ==========================================================
     # SEO (singleton: siempre id = 1)
     # ==========================================================
@@ -194,6 +228,17 @@ def inicializar_base_datos():
         VALUES (?, ?, 1, ?)
     ''', modulos_default)
 
+    # Orden/visibilidad por defecto de los sub-módulos internos de "contact"
+    contact_submodulos_default = [
+        ('mensajes', 'Formulario de Mensajes',  1),
+        ('mapa',     'Mapa de Ubicación',       2),
+        ('datos',    'Datos de Contacto',       3),
+    ]
+    cursor.executemany('''
+        INSERT OR IGNORE INTO contenido_contact_submodulos (id, nombre_legible, activo, orden)
+        VALUES (?, ?, 1, ?)
+    ''', contact_submodulos_default)
+
     # Contenido inicial mínimo para que la landing no se vea vacía/rota
     cursor.execute('''
         INSERT OR IGNORE INTO contenido_hero (id, titulo, subtitulo, texto_boton, url_boton)
@@ -202,6 +247,15 @@ def inicializar_base_datos():
     cursor.execute('''
         INSERT OR IGNORE INTO contenido_about (id, titulo, descripcion, mision)
         VALUES (1, 'Sobre Nosotros', 'Cuenta aquí la historia de tu negocio.', 'Tu misión o propuesta de valor.')
+    ''')
+    cursor.execute('''
+        INSERT OR IGNORE INTO contenido_contact_datos (id, titulo, subtitulo, telefono, email, ubicacion_texto, horario)
+        VALUES (1, 'Hablemos', '¿Tienes alguna duda o quieres agendar una clase? Estoy disponible para ayudarte.',
+                '+56 9 1234 5678', 'contacto@tudominio.cl', 'Santiago, Chile', 'Lun - Vie | 9:00 - 18:00')
+    ''')
+    cursor.execute('''
+        INSERT OR IGNORE INTO contenido_contact_mapa (id, direccion)
+        VALUES (1, 'Santiago, Chile')
     ''')
     cursor.execute('''
         INSERT OR IGNORE INTO configuracion_seo (id, meta_titulo, meta_descripcion)

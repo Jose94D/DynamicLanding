@@ -1,24 +1,24 @@
 /* ==========================================================
-   Diseño acorde a la identidad visual del sitio (Luthier):
-   verde oscuro + crema + dorado, serif para títulos.
+   Diseño original de columnas con línea divisoria; paleta de
+   colores alineada al módulo de Contáctanos (--gallery-*).
    Si estas fuentes ya se cargan globalmente en el sitio,
    puedes eliminar el @import de abajo.
    ========================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-    --luthier-dark: #16261f;
-    --luthier-cream: #f5f1e8;
-    --luthier-gold: #c9a768;
-    --luthier-text: #22302a;
-    --luthier-muted: #7a7c74;
-    --luthier-line: rgba(22, 38, 31, .14);
+    --gallery-dark: #10261f;
+    --gallery-bg: #f4f1ea;
+    --gallery-gold: #c8a765;
+    --gallery-text: #22302a;
+    --gallery-muted: #4b5a55;
+    --gallery-line: rgba(16, 38, 31, .14);
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Inter', system-ui, sans-serif;
 }
 
 .blog-preview-section {
-    background-color: var(--luthier-cream);
+    background-color: var(--gallery-bg);
     padding: 5.5rem 0;
     font-family: var(--font-sans);
 }
@@ -35,27 +35,27 @@
     font-weight: 600;
     letter-spacing: .22em;
     text-transform: uppercase;
-    color: var(--luthier-muted);
+    color: var(--gallery-gold);
 }
 .blog-eyebrow i {
     display: block;
     width: 48px;
     height: 1px;
-    background-color: var(--luthier-line);
+    background-color: var(--gallery-line);
     font-style: normal;
 }
 
 .section-title {
     font-family: var(--font-serif);
     font-weight: 600;
-    color: var(--luthier-dark);
+    color: var(--gallery-dark);
     font-size: 3.25rem;
     line-height: 1.05;
     margin-bottom: .9rem;
 }
 
 .section-subtitle {
-    color: var(--luthier-muted);
+    color: var(--gallery-muted);
     font-size: 1.05rem;
     margin-bottom: 0;
 }
@@ -73,13 +73,13 @@
 
 @media (min-width: 768px) {
     .col-md-4:not(:first-child) .blog-item {
-        border-left: 1px solid var(--luthier-line);
+        border-left: 1px solid var(--gallery-line);
     }
 }
 @media (max-width: 767.98px) {
     .blog-item {
         padding: 1.75rem 0 0;
-        border-top: 1px solid var(--luthier-line);
+        border-top: 1px solid var(--gallery-line);
     }
     .col-md-4:first-child .blog-item {
         padding-top: 0;
@@ -99,13 +99,13 @@
     font-weight: 600;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--luthier-muted);
+    color: var(--gallery-muted);
 }
 .blog-item-meta i {
     display: block;
     width: 14px;
     height: 1px;
-    background-color: var(--luthier-line);
+    background-color: var(--gallery-line);
     font-style: normal;
 }
 
@@ -113,13 +113,13 @@
     font-family: var(--font-serif);
     font-weight: 600;
     font-size: 1.45rem;
-    color: var(--luthier-dark);
+    color: var(--gallery-dark);
     line-height: 1.3;
     margin-bottom: .9rem;
 }
 
 .blog-item-excerpt {
-    color: var(--luthier-muted);
+    color: var(--gallery-muted);
     font-size: .95rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
@@ -139,14 +139,14 @@
     align-items: center;
     gap: .5rem;
     align-self: flex-start;
-    color: var(--luthier-dark);
+    color: var(--gallery-dark);
     font-weight: 600;
     font-size: .95rem;
     text-decoration: none;
     transition: gap .15s ease, color .15s ease;
 }
 .blog-item-link:hover {
-    color: var(--luthier-gold);
+    color: var(--gallery-gold);
     gap: .75rem;
 }
 
@@ -162,7 +162,7 @@
     display: block;
     width: 42px;
     height: 1px;
-    background-color: var(--luthier-line);
+    background-color: var(--gallery-line);
     font-style: normal;
 }
 .blog-footer-link a {
@@ -173,11 +173,11 @@
     font-weight: 600;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: var(--luthier-dark);
+    color: var(--gallery-dark);
     text-decoration: none;
     transition: color .15s ease, gap .15s ease;
 }
 .blog-footer-link a:hover {
-    color: var(--luthier-gold);
+    color: var(--gallery-gold);
     gap: .75rem;
 }

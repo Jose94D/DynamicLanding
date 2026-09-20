@@ -1,0 +1,159 @@
+:root {
+    --gallery-dark: #10261f;
+    --gallery-gold: #c8a765;
+    --gallery-bg: #f4f1ea;
+}
+
+.testimonials-section {
+    background-color: var(--gallery-dark);
+}
+
+/* --- Encabezado --- */
+.testimonials-eyebrow {
+    font-size: .75rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gallery-gold);
+    font-weight: 600;
+}
+
+.testimonials-title {
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    color: #ffffff;
+}
+
+/* --- Flechas de navegación, junto al encabezado --- */
+.testimonials-arrows {
+    display: flex;
+    gap: .6rem;
+}
+.testimonials-arrow {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .25);
+    background-color: transparent;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    transition: background-color .2s ease, border-color .2s ease;
+}
+.testimonials-arrow:hover {
+    background-color: var(--gallery-gold);
+    border-color: var(--gallery-gold);
+    color: var(--gallery-dark);
+}
+
+/* --- Carrusel horizontal con scroll-snap --- */
+.testimonials-track {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: .25rem;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.testimonials-track::-webkit-scrollbar {
+    display: none;
+}
+
+.testimonial-item {
+    flex: 0 0 auto;
+    /* Ancho calculado para ver ~3 tarjetas completas en desktop */
+    width: calc((100% - 2 * 1.25rem) / 3);
+    scroll-snap-align: start;
+}
+
+/* --- Tarjeta --- */
+.testimonial-card {
+    background-color: #ffffff;
+    border-radius: .5rem;
+    padding: 1.75rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-stars {
+    color: var(--gallery-gold);
+    font-size: .85rem;
+    margin-bottom: 1rem;
+}
+.testimonial-stars i {
+    margin-right: .1rem;
+}
+
+.testimonial-text {
+    color: #4b5a55;
+    font-size: .95rem;
+    line-height: 1.6;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+    quotes: "\201C" "\201D";
+}
+.testimonial-text::before {
+    content: open-quote;
+}
+.testimonial-text::after {
+    content: close-quote;
+}
+/* El texto viene del editor enriquecido (Quill) y trae su propio <p>;
+   se le quita el margen para que no rompa el espaciado de la tarjeta. */
+.testimonial-text p {
+    display: inline;
+    margin: 0;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+}
+.testimonial-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.testimonial-avatar-fallback {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: var(--gallery-bg);
+    color: var(--gallery-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.testimonial-name {
+    font-weight: 600;
+    color: var(--gallery-dark);
+    font-size: .95rem;
+    margin-bottom: 0;
+}
+.testimonial-location {
+    color: var(--gallery-gold);
+    font-size: .8rem;
+}
+
+@media (max-width: 991.98px) {
+    .testimonial-item {
+        width: calc((100% - 1.25rem) / 2);
+    }
+}
+@media (max-width: 767.98px) {
+    .testimonial-item {
+        width: 85%;
+    }
+}

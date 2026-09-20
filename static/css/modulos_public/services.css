@@ -1,0 +1,78 @@
+:root {
+    --services-dark: #10261f;
+    --services-bg: #f4f1ea;
+    --services-highlight-bg: #ffffff;
+    --services-border: rgba(16, 38, 31, .12);
+}
+
+.services-section {
+    background-color: var(--services-bg);
+}
+
+.services-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.services-item {
+    flex: 1 1 240px;
+    max-width: 380px;
+    padding: 2.5rem 2rem;
+    text-align: left;
+    border-right: 1px solid var(--services-border);
+    border-radius: .5rem;
+    transition: background-color .25s ease;
+}
+.services-item:last-child {
+    border-right: none;
+}
+/* Al pasar el mouse, se resalta ese servicio con el tono crema (y no lleva línea divisoria a su lado) */
+.services-item:hover {
+    background-color: var(--services-highlight-bg);
+    border-right-color: transparent;
+    box-shadow: 0 .5rem 1.25rem rgba(16, 38, 31, .08);
+}
+.services-item:hover + .services-item {
+    border-left: none;
+}
+
+.services-icon {
+    font-size: 2rem;
+    color: var(--services-dark);
+    margin-bottom: 1.75rem;
+    line-height: 1;
+}
+
+.services-title {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--services-dark);
+    margin-bottom: 1rem;
+}
+
+.services-desc {
+    font-size: .95rem;
+    line-height: 1.65;
+    color: rgba(16, 38, 31, .65);
+}
+
+.services-desc p:first-child {
+    margin-top: 0;
+}
+.services-desc p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 767.98px) {
+    .services-item {
+        flex: 1 1 260px;
+        max-width: 420px;
+        border-right: none;
+        border-bottom: 1px solid var(--services-border);
+        text-align: center;
+    }
+    .services-item:last-child {
+        border-bottom: none;
+    }
+}

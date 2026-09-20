@@ -11,9 +11,9 @@ from .editar_seo import seo_bp
 auth_bp = Blueprint('auth', __name__, url_prefix='/admin')
 
 # content_bp es compartido por editar_about/editar_blog/editar_carousel/
-# editar_servicios/editar_gallery/editar_testimonials/editar_hero (los
-# "módulos" del CMS). Antes vivía en routes/content/__init__.py; al eliminar
-# esa carpeta, pasa a definirse aquí, en el __init__.py del paquete admin.
+# editar_servicios/editar_gallery/editar_testimonials/editar_hero/editar_contact
+# (los "módulos" del CMS). Antes vivía en routes/content/__init__.py; al
+# eliminar esa carpeta, pasa a definirse aquí, en el __init__.py del paquete admin.
 content_bp = Blueprint('content', __name__, url_prefix='/admin/contenido')
 
 # Se importan AL FINAL, después de crear auth_bp/content_bp, porque cada uno
@@ -23,7 +23,7 @@ content_bp = Blueprint('content', __name__, url_prefix='/admin/contenido')
 # rutas, cada módulo que lo necesita lo importa directamente
 # (`from .helpers import ...`).
 from . import login, cambiar_password  # noqa: E402,F401
-from . import editar_hero, editar_about, editar_carousel, editar_servicios, editar_gallery, editar_testimonials, editar_blog  # noqa: E402,F401
+from . import editar_hero, editar_about, editar_carousel, editar_servicios, editar_gallery, editar_testimonials, editar_blog, editar_contact  # noqa: E402,F401
 
 
 def register_blueprints(app):

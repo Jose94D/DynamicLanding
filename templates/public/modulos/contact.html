@@ -1,6 +1,7 @@
-<section class="py-5 bg-white" id="contact">
-    <div class="container" style="max-width: 600px;">
-        <h2 class="text-center mb-4">Contáctanos</h2>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modulos_public/contact.css') }}">
+
+<section class="py-5 contact-section" id="contact">
+    <div class="container">
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -10,23 +11,78 @@
             {% endif %}
         {% endwith %}
 
-        <form method="POST" action="{{ url_for('public.enviar_contacto') }}">
-            <!-- Campo trampa anti-spam: invisible para personas, los bots lo suelen rellenar -->
-            <div style="position: absolute; left: -9999px;" aria-hidden="true">
-                <label for="sitio_web">No completar este campo</label>
-                <input type="text" id="sitio_web" name="sitio_web" tabindex="-1" autocomplete="off">
-            </div>
+        <div class="row g-4 align-items-stretch">
+            {% for sub in contact_submodulos %}
+                {% if sub.activo == 1 %}
+                <div class="col-md">
 
-            <div class="mb-3">
-                <input type="text" name="nombre" class="form-control" placeholder="Tu nombre" required>
-            </div>
-            <div class="mb-3">
-                <input type="email" name="email" class="form-control" placeholder="Tu correo electrónico" required>
-            </div>
-            <div class="mb-3">
-                <textarea name="mensaje" class="form-control" rows="3" placeholder="Tu mensaje" required></textarea>
-            </div>
-            <button class="btn btn-dark w-100" type="submit">Enviar Mensaje</button>
-        </form>
+                    {% if sub.id == 'datos' %}
+                        <p class="contact-eyebrow mb-2">Contacto</p>
+                        <h2 class="contact-title mb-3">{{ contact_datos.titulo }}</h2>
+                        {% if contact_datos.subtitulo %}
+                        <p class="contact-subtitle mb-4">{{ contact_datos.subtitulo }}</p>
+                        {% endif %}
+                        <ul class="contact-icon-list list-unstyled">
+                            {% if contact_datos.telefono %}
+                            <li><i class="bi bi-telephone-fill"></i>{{ contact_datos.telefono }}</li>
+                            {% endif %}
+                            {% if contact_datos.email %}
+                            <li><i class="bi bi-envelope-fill"></i>{{ contact_datos.email }}</li>
+                            {% endif %}
+                            {% if contact_datos.ubicacion_texto %}
+                            <li><i class="bi bi-geo-alt-fill"></i>{{ contact_datos.ubicacion_texto }}</li>
+                            {% endif %}
+                            {% if contact_datos.horario %}
+                            <li><i class="bi bi-clock-fill"></i>{{ contact_datos.horario }}</li>
+                            {% endif %}
+                        </ul>
+
+                    {% elif sub.id == 'mapa' %}
+                        <div class="contact-map-wrapper h-100">
+                            <div class="ratio contact-map-ratio h-100">
+                                <iframe
+                                    src="https://www.google.com/maps?q={{ contact_mapa.direccion | replace(' ', '+') }}&output=embed"
+                                    style="border:0;"
+                                    allowfullscreen
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade">
+                                </iframe>
+                            </div>
+                            <div class="contact-map-caption">
+                                <span class="contact-map-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                                <div>
+                                    <span class="contact-map-caption-title">Nuestra ubicación</span>
+                                    <span class="contact-map-caption-sub">{{ contact_mapa.direccion }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% elif sub.id == 'mensajes' %}
+                        <form method="POST" action="{{ url_for('public.enviar_contacto') }}" class="contact-form">
+                            <!-- Campo trampa anti-spam: invisible para personas, los bots lo suelen rellenar -->
+                            <div style="position: absolute; left: -9999px;" aria-hidden="true">
+                                <label for="sitio_web">No completar este campo</label>
+                                <input type="text" id="sitio_web" name="sitio_web" tabindex="-1" autocomplete="off">
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="text" name="nombre" class="form-control contact-input" placeholder="Nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" name="email" class="form-control contact-input" placeholder="Correo electrónico" required>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="mensaje" class="form-control contact-input" rows="4" placeholder="Mensaje" required></textarea>
+                            </div>
+                            <button class="btn contact-submit-btn w-100" type="submit">
+                                Enviar mensaje <i class="bi bi-arrow-right ms-1"></i>
+                            </button>
+                        </form>
+                    {% endif %}
+
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
     </div>
 </section>
