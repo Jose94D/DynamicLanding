@@ -1,0 +1,38 @@
+{% extends "public/base.html" %}
+
+{% block content %}
+<header class="contenedor pt-16 pb-12 md:pt-20">
+    <p class="ceja mb-3">Blog</p>
+    <h1 class="mb-2 font-serif text-[2.5rem] leading-tight font-bold text-tinta">Todas las novedades</h1>
+    <p class="text-[1.05rem] text-gris">Explora los artículos publicados, del más reciente al más antiguo.</p>
+</header>
+
+<div class="contenedor grid gap-12 pb-20 lg:grid-cols-[1fr_3fr]">
+    <aside class="lg:sticky lg:top-8 lg:self-start">
+        {% with enlace_base = '', mes_actual = none %}{% include 'public/partials/archivo_blog.html' %}{% endwith %}
+    </aside>
+
+    <div>
+        {% for grupo in grupos %}
+        <section class="mb-12 scroll-mt-6" id="{{ grupo.key }}" data-mes>
+            <h2 class="mb-6 border-b border-linea pb-3 font-serif text-[1.4rem] font-bold text-tinta">{{ grupo.label }}</h2>
+
+            {% for articulo in grupo.articulos %}
+            <article class="border-b border-linea py-6 last:border-0">
+                <p class="mb-1.5 text-[.7rem] tracking-wider text-oro uppercase">{{ (articulo.fecha_publicacion | string)[:10] }}</p>
+                <h3 class="mb-2.5 font-serif text-[1.3rem] leading-snug font-bold">
+                    <a href="{{ url_for('public.ver_articulo', id=articulo.id) }}" class="text-tinta decoration-oro hover:text-bosque hover:underline">{{ articulo.titulo }}</a>
+                </h3>
+                <div class="mb-3 text-[.95rem] leading-relaxed text-gris">{{ articulo.extracto | limpiar_html }}</div>
+                <a href="{{ url_for('public.ver_articulo', id=articulo.id) }}" class="inline-flex items-center gap-1.5 text-sm font-semibold text-bosque transition-all hover:gap-2.5 hover:text-oro">
+                    Leer más <span class="sr-only">sobre {{ articulo.titulo }}</span><span aria-hidden="true">→</span>
+                </a>
+            </article>
+            {% endfor %}
+        </section>
+        {% else %}
+        <p class="text-gris">Todavía no hay artículos publicados.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

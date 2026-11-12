@@ -1,0 +1,48 @@
+{% if testimonials %}
+<section class="seccion bg-bosque" id="testimonials">
+    <div class="contenedor">
+        <div class="mb-8 flex items-end justify-between gap-4">
+            <div>
+                <p class="ceja mb-2">Testimonios</p>
+                <h2 class="titulo-seccion text-white">Lo que dicen nuestros clientes</h2>
+            </div>
+            <div class="flex gap-2.5">
+                <button type="button" class="flecha border-white/25 text-white hover:border-oro hover:bg-oro hover:text-bosque" data-mover="-1" data-pista="pista-testimonios" aria-label="Testimonio anterior">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="flecha border-white/25 text-white hover:border-oro hover:bg-oro hover:text-bosque" data-mover="1" data-pista="pista-testimonios" aria-label="Testimonio siguiente">
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="pista gap-5" id="pista-testimonios">
+            {% for t in testimonials %}
+            <figure class="flex w-[85%] flex-col rounded-lg bg-white p-7 md:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-2.5rem)/3)]">
+                {% if t.calificacion %}
+                <div class="mb-4 flex gap-0.5 text-sm text-oro" role="img" aria-label="{{ t.calificacion }} de 5 estrellas">
+                    {% for i in range(5) %}<i class="bi {{ 'bi-star-fill' if i < t.calificacion else 'bi-star' }}" aria-hidden="true"></i>{% endfor %}
+                </div>
+                {% endif %}
+
+                <blockquote class="mb-6 flex-1 text-[.95rem] leading-relaxed text-musgo italic [&_p]:inline">
+                    &ldquo;{{ t.texto | limpiar_html }}&rdquo;
+                </blockquote>
+
+                <figcaption class="flex items-center gap-3.5">
+                    {% if t.foto %}
+                    <img src="{{ url_for('static', filename='uploads/testimonials/' ~ t.foto) }}" class="size-[46px] shrink-0 rounded-full object-cover" alt="" loading="lazy">
+                    {% else %}
+                    <span class="flex size-[46px] shrink-0 items-center justify-center rounded-full bg-crema font-semibold text-bosque" aria-hidden="true">{{ t.nombre[0] | upper }}</span>
+                    {% endif %}
+                    <div>
+                        <p class="text-[.95rem] font-semibold text-bosque">{{ t.nombre }}</p>
+                        {% if t.cargo %}<p class="text-xs text-oro">{{ t.cargo }}</p>{% endif %}
+                    </div>
+                </figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

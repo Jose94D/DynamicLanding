@@ -9,3 +9,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+# Entorno virtual
+.venv/
+
+# Dependencias de Node
+node_modules/

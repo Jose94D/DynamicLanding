@@ -1,0 +1,47 @@
+{# =========================================================
+   Variables del contexto (objeto "hero"):
+     hero.titulo, hero.subtitulo
+     hero.texto_boton / hero.url_boton                         -> botón primario
+     hero.eyebrow, hero.texto_boton_secundario / url_..., hero.imagen, hero.imagen_alt
+       -> opcionales: el modelo actual no los tiene, la plantilla los muestra si algún día existen.
+   ========================================================= #}
+<header class="grid overflow-hidden bg-bosque text-crema lg:grid-cols-2">
+    <div class="order-2 flex items-center lg:order-1">
+        <div class="mx-auto w-full max-w-[640px] px-6 py-14 md:px-12 lg:py-24">
+            {% if hero.eyebrow %}<p class="ceja mb-3">{{ hero.eyebrow }}</p>{% endif %}
+
+            <h1 class="mb-6 font-serif text-[clamp(1.9rem,6vw,2.6rem)] leading-[1.15] font-semibold text-white lg:text-[clamp(2.2rem,4vw,3.4rem)]">
+                {{ hero.titulo | limpiar_html }}
+            </h1>
+
+            {% if hero.subtitulo %}
+                <p class="mb-8 max-w-[30rem] text-[1.05rem] leading-relaxed text-crema/80">{{ hero.subtitulo }}</p>
+            {% endif %}
+
+            <div class="flex flex-wrap items-center gap-5">
+                {% if hero.texto_boton and hero.url_boton %}
+                    <a href="{{ hero.url_boton }}" class="inline-flex items-center gap-2 rounded-full border border-oro bg-oro px-6 py-3 font-semibold text-bosque-900 transition hover:-translate-y-px hover:border-oro-claro hover:bg-oro-claro focus-visible:ring-2 focus-visible:ring-oro-claro focus-visible:ring-offset-2 focus-visible:ring-offset-bosque focus-visible:outline-none">
+                        {{ hero.texto_boton }} <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+
+                {% if hero.texto_boton_secundario and hero.url_boton_secundario %}
+                    <a href="{{ hero.url_boton_secundario }}" class="group inline-flex items-center gap-3 font-medium hover:text-oro-claro">
+                        <span class="flex size-9 items-center justify-center rounded-full border border-crema/50 text-xs transition group-hover:border-oro-claro group-hover:bg-oro/15">
+                            <i class="bi bi-play-fill" aria-hidden="true"></i>
+                        </span>
+                        {{ hero.texto_boton_secundario }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if hero.imagen %}
+    <div class="relative order-1 min-h-80 lg:order-2">
+        <img src="{{ hero.imagen }}" alt="{{ hero.imagen_alt | default(hero.titulo | striptags, true) }}" class="absolute inset-0 size-full object-cover">
+        {# Degradado para que la imagen se funda con el fondo oscuro #}
+        <div class="pointer-events-none absolute inset-0 hidden bg-gradient-to-r from-bosque to-transparent to-30% lg:block"></div>
+    </div>
+    {% endif %}
+</header>

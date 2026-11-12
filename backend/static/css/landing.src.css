@@ -1,0 +1,61 @@
+/*
+ * Fuente de Tailwind para la landing pública. NO se sirve directo: se compila a landing.css con
+ *   npm run css          (una vez, minificado)
+ *   npm run css:watch    (mientras editas plantillas)
+ * El servidor solo necesita el landing.css generado; no hace falta Node en el hosting.
+ */
+@import "tailwindcss" source(none);
+@source "../../templates/public";
+
+@theme {
+  --color-bosque: #10261f;      /* verde oscuro de marca */
+  --color-bosque-900: #0b1c16;
+  --color-oro: #c8a765;          /* acento dorado */
+  --color-oro-claro: #e4d3ac;
+  --color-crema: #f4f1ea;        /* fondo de secciones */
+  --color-tinta: #22302a;        /* texto principal */
+  --color-musgo: #4b5a55;        /* texto secundario */
+  --color-gris: #6f6b60;         /* texto secundario del blog */
+  --color-linea: rgb(16 38 31 / 0.14);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+}
+
+/* Piezas que se repiten en todos los módulos. */
+@layer components {
+  .contenedor { @apply mx-auto w-full max-w-6xl px-4 sm:px-6; }
+  .seccion { @apply py-16 md:py-20; }
+  .ceja { @apply text-xs font-semibold tracking-[0.18em] text-oro uppercase; }
+  .titulo-seccion { @apply font-serif text-[clamp(1.6rem,2.6vw,2.1rem)] leading-tight font-semibold text-bosque; }
+
+  /* Botón redondo de las flechas (galería, testimonios, carrusel). */
+  .flecha {
+    @apply flex size-9 items-center justify-center rounded-full border border-linea text-sm text-bosque transition
+      hover:border-bosque hover:bg-bosque hover:text-white focus-visible:ring-2 focus-visible:ring-oro focus-visible:outline-none;
+  }
+
+  /* Pista horizontal con scroll-snap y sin barra visible (galería y testimonios). */
+  .pista { @apply flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden; }
+  .pista > * { @apply shrink-0 snap-start; }
+
+  /* HTML enriquecido que viene del editor del panel (ya saneado por limpiar_html). */
+  .contenido > * + * { @apply mt-4; }
+  .contenido > :first-child { @apply mt-0; }
+  .contenido h2 { @apply mt-8 font-serif text-2xl font-bold text-tinta; }
+  .contenido h3 { @apply mt-6 font-serif text-xl font-bold text-tinta; }
+  .contenido a { @apply text-bosque underline decoration-oro underline-offset-[3px] hover:text-oro; }
+  .contenido ul { @apply list-disc ps-6; }
+  .contenido ol { @apply list-decimal ps-6; }
+  .contenido blockquote { @apply border-s-2 border-oro ps-4 italic; }
+  .contenido img { @apply h-auto max-w-full rounded-lg; }
+  .contenido .ql-align-center { @apply text-center; }
+  .contenido .ql-align-right { @apply text-right; }
+}

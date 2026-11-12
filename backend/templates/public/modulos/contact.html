@@ -1,0 +1,74 @@
+<section class="seccion" id="contact">
+    <div class="contenedor">
+
+        {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+            <p role="{{ 'alert' if categoria == 'danger' else 'status' }}"
+               class="mb-6 rounded-lg px-4 py-3 text-sm {{ 'bg-red-50 text-red-800 ring-1 ring-red-200' if categoria == 'danger' else 'bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200' }}">
+                {{ mensaje }}
+            </p>
+        {% endfor %}
+
+        {# Las partes visibles se reparten el ancho, en el orden que define el panel. #}
+        <div class="flex flex-col gap-6 md:flex-row md:items-stretch">
+            {% for sub in contact_submodulos %}
+                {% if sub.activo %}
+                <div class="min-w-0 md:flex-1">
+
+                    {% if sub.id == 'datos' %}
+                        <p class="ceja mb-2">Contacto</p>
+                        <h2 class="mb-3 font-serif text-[clamp(1.5rem,2.4vw,2rem)] leading-tight font-semibold text-bosque">{{ contact_datos.titulo }}</h2>
+                        {% if contact_datos.subtitulo %}
+                        <p class="mb-6 max-w-lg text-musgo">{{ contact_datos.subtitulo }}</p>
+                        {% endif %}
+                        <ul class="space-y-3.5 font-medium text-bosque">
+                            {% for icono, valor in [('bi-telephone-fill', contact_datos.telefono), ('bi-envelope-fill', contact_datos.email),
+                                                     ('bi-geo-alt-fill', contact_datos.ubicacion_texto), ('bi-clock-fill', contact_datos.horario)] if valor %}
+                            <li class="flex items-center gap-2.5"><i class="bi {{ icono }} text-oro" aria-hidden="true"></i>{{ valor }}</li>
+                            {% endfor %}
+                        </ul>
+
+                    {% elif sub.id == 'mapa' %}
+                        <div class="relative h-full min-h-[280px] overflow-hidden rounded-md">
+                            <iframe title="Mapa: {{ contact_mapa.direccion }}"
+                                    src="https://www.google.com/maps?q={{ contact_mapa.direccion | urlencode }}&output=embed"
+                                    class="absolute inset-0 size-full border-0" allowfullscreen loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <div class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-3 bg-gradient-to-t from-bosque/80 to-transparent px-4 py-3.5 text-white">
+                                <span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/60 text-xs">
+                                    <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                                </span>
+                                <div>
+                                    <span class="block text-sm font-semibold">Nuestra ubicación</span>
+                                    <span class="block text-xs opacity-85">{{ contact_mapa.direccion }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% elif sub.id == 'mensajes' %}
+                        <form method="POST" action="{{ url_for('public.enviar_contacto') }}" class="space-y-3">
+                            {{ csrf_input() }}
+                            {# Campo trampa anti-spam: invisible para personas; los bots suelen rellenarlo. #}
+                            <div class="absolute -left-[9999px]" aria-hidden="true">
+                                <label for="sitio_web">No completar este campo</label>
+                                <input type="text" id="sitio_web" name="sitio_web" tabindex="-1" autocomplete="off">
+                            </div>
+
+                            {% set campo = 'block w-full rounded-lg border border-bosque/12 bg-white px-4 py-3.5 text-bosque placeholder:text-[#8a938e] focus:border-oro focus:ring-4 focus:ring-oro/20 focus:outline-none' %}
+                            <label class="sr-only" for="contacto-nombre">Nombre</label>
+                            <input id="contacto-nombre" type="text" name="nombre" class="{{ campo }}" placeholder="Nombre" autocomplete="name" required>
+                            <label class="sr-only" for="contacto-email">Correo electrónico</label>
+                            <input id="contacto-email" type="email" name="email" class="{{ campo }}" placeholder="Correo electrónico" autocomplete="email" required>
+                            <label class="sr-only" for="contacto-mensaje">Mensaje</label>
+                            <textarea id="contacto-mensaje" name="mensaje" class="{{ campo }}" rows="4" placeholder="Mensaje" required></textarea>
+                            <button type="submit" class="flex w-full items-center justify-center gap-1.5 rounded-lg bg-bosque px-4 py-3.5 font-medium text-white transition hover:bg-bosque-900 focus-visible:ring-2 focus-visible:ring-oro focus-visible:ring-offset-2 focus-visible:outline-none">
+                                Enviar mensaje <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </form>
+                    {% endif %}
+
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>

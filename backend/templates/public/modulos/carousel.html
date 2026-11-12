@@ -1,0 +1,30 @@
+{% if carousel %}
+{# Carrusel con scroll-snap + static/js/landing.js (avance automático, flechas y puntos). Reemplaza al de Bootstrap. #}
+<section class="relative" aria-roledescription="carrusel" aria-label="Imágenes destacadas" data-carrusel data-intervalo="5000">
+    <div class="pista h-[60vh]" id="pista-carrusel">
+        {% for img in carousel %}
+        <div class="w-full" role="group" aria-roledescription="diapositiva" aria-label="{{ loop.index }} de {{ loop.length }}">
+            <img src="{{ url_for('static', filename='uploads/carousel/' ~ img.nombre_archivo) }}" class="size-full object-cover" alt=""
+                 {% if not loop.first %}loading="lazy"{% endif %}>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if carousel | length > 1 %}
+    <button type="button" class="flecha absolute top-1/2 left-4 -translate-y-1/2 border-white/40 bg-black/25 text-white hover:border-white hover:bg-white hover:text-bosque"
+            data-mover="-1" data-pista="pista-carrusel" aria-label="Imagen anterior">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+    </button>
+    <button type="button" class="flecha absolute top-1/2 right-4 -translate-y-1/2 border-white/40 bg-black/25 text-white hover:border-white hover:bg-white hover:text-bosque"
+            data-mover="1" data-pista="pista-carrusel" aria-label="Imagen siguiente">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+    </button>
+    <div class="absolute inset-x-0 bottom-4 flex justify-center gap-2">
+        {% for img in carousel %}
+        <button type="button" class="h-1 w-8 rounded-full bg-white/50 transition aria-[current=true]:bg-white"
+                data-ir="{{ loop.index0 }}" data-pista="pista-carrusel" aria-label="Ir a la imagen {{ loop.index }}"></button>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+{% endif %}

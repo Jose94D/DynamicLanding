@@ -1,0 +1,38 @@
+{% if blog %}
+<section class="py-20 md:py-24" id="noticias">
+    <div class="contenedor">
+        <header class="mb-12">
+            <p class="mb-4 flex items-center gap-3.5">
+                <span class="text-xs font-semibold tracking-[0.22em] text-oro uppercase">Blog</span>
+                <span class="h-px w-12 bg-linea" aria-hidden="true"></span>
+            </p>
+            <h2 class="mb-3.5 font-serif text-[clamp(2.2rem,5vw,3.25rem)] leading-[1.05] font-semibold text-bosque">Últimas novedades</h2>
+            <p class="text-[1.05rem] text-musgo">Mantente al tanto de nuestras actualizaciones.</p>
+        </header>
+
+        {# Columnas separadas por una línea fina (en celular, líneas horizontales). #}
+        <div class="grid divide-y divide-linea md:grid-cols-3 md:divide-x md:divide-y-0">
+            {% for articulo in blog %}
+            <article class="flex flex-col py-7 first:pt-0 md:px-9 md:py-0 md:first:ps-0 md:last:pe-0">
+                <p class="mb-3.5 text-[.7rem] font-semibold tracking-widest text-musgo uppercase">
+                    {{ (articulo.fecha_publicacion | string)[:10] }}
+                </p>
+                <h3 class="mb-3.5 font-serif text-[1.45rem] leading-snug font-semibold text-bosque">{{ articulo.titulo }}</h3>
+                <div class="mb-6 line-clamp-3 flex-1 text-[.95rem] leading-relaxed text-musgo">{{ articulo.extracto | limpiar_html }}</div>
+                <a href="{{ url_for('public.ver_articulo', id=articulo.id) }}" class="inline-flex items-center gap-2 self-start text-[.95rem] font-semibold text-bosque transition-all hover:gap-3 hover:text-oro">
+                    Leer más <span class="sr-only">sobre {{ articulo.titulo }}</span><span aria-hidden="true">→</span>
+                </a>
+            </article>
+            {% endfor %}
+        </div>
+
+        <p class="mt-14 flex items-center justify-center gap-4">
+            <span class="h-px w-10 bg-linea" aria-hidden="true"></span>
+            <a href="{{ url_for('public.blog_archivo') }}" class="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.12em] text-bosque uppercase transition-all hover:gap-3 hover:text-oro">
+                Ver todos los artículos <span aria-hidden="true">→</span>
+            </a>
+            <span class="h-px w-10 bg-linea" aria-hidden="true"></span>
+        </p>
+    </div>
+</section>
+{% endif %}

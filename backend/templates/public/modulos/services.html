@@ -1,0 +1,23 @@
+{# services: lista con s.icono (clase de Bootstrap Icons, ej "bi-star"), s.titulo, s.descripcion.
+   Las tarjetas crecen hasta un máximo y se centran: se ve bien con 1, 2, 3 o más servicios. #}
+{% if services %}
+<section class="seccion" id="services">
+    <div class="contenedor">
+        <div class="flex flex-wrap justify-center">
+            {% for s in services %}
+            <div class="max-w-[420px] flex-[1_1_260px] rounded-lg border-b border-linea px-8 py-10 text-center transition last:border-0
+                        hover:border-transparent hover:bg-white hover:shadow-[0_.5rem_1.25rem_rgb(16_38_31/.08)]
+                        md:max-w-[380px] md:flex-[1_1_240px] md:border-r md:border-b-0 md:text-left">
+                {% if s.icono %}
+                    <div class="mb-7 text-[2rem] leading-none text-bosque"><i class="bi {{ s.icono }}" aria-hidden="true"></i></div>
+                {% endif %}
+                <h3 class="mb-4 text-xl font-bold text-bosque">{{ s.titulo }}</h3>
+                {% if s.descripcion %}
+                    <div class="contenido text-[.95rem] leading-relaxed text-bosque/65">{{ s.descripcion | limpiar_html }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

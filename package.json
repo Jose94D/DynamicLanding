@@ -1,0 +1,13 @@
+{
+  "name": "dynamiclanding-landing",
+  "private": true,
+  "description": "Compila el CSS de la landing pública (Tailwind). El panel admin tiene su propio package.json en admin/.",
+  "scripts": {
+    "css": "tailwindcss -i backend/static/css/landing.src.css -o backend/static/css/landing.css --minify",
+    "css:watch": "tailwindcss -i backend/static/css/landing.src.css -o backend/static/css/landing.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.5",
+    "tailwindcss": "^4.3.5"
+  }
+}

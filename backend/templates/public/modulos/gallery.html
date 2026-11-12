@@ -1,0 +1,45 @@
+{# gallery: lista con item.nombre_archivo (en static/uploads/gallery/) e item.titulo opcional. #}
+{% if gallery %}
+<section class="seccion" id="gallery">
+    <div class="contenedor">
+        <header class="mb-8">
+            <p class="ceja mb-2">Galería</p>
+            <h2 class="titulo-seccion">Algunos de mis trabajos</h2>
+        </header>
+
+        <div class="relative">
+            <button type="button" class="flecha absolute top-1/2 -left-1 z-10 hidden -translate-y-1/2 bg-crema/90 md:flex lg:-left-12"
+                    data-mover="-1" data-pista="pista-galeria" aria-label="Imágenes anteriores">
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </button>
+
+            {# 5 visibles en escritorio; en celular se desliza con el dedo. #}
+            <div class="pista gap-2 pb-1" id="pista-galeria">
+                {% for item in gallery %}
+                {% set url = url_for('static', filename='uploads/gallery/' ~ item.nombre_archivo) %}
+                <a href="{{ url }}" class="group block w-[150px] overflow-hidden rounded-md transition hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-oro focus-visible:outline-none md:w-[calc((100%-2rem)/5)]"
+                   data-visor="visor-galeria" data-titulo="{{ item.titulo or '' }}">
+                    <img src="{{ url }}" alt="{{ item.titulo or 'Imagen de la galería' }}" loading="lazy"
+                         class="aspect-[4/3] size-full object-cover transition duration-500 group-hover:scale-105">
+                </a>
+                {% endfor %}
+            </div>
+
+            <button type="button" class="flecha absolute top-1/2 -right-1 z-10 hidden -translate-y-1/2 bg-crema/90 md:flex lg:-right-12"
+                    data-mover="1" data-pista="pista-galeria" aria-label="Imágenes siguientes">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    {# Vista ampliada: <dialog> nativo (Esc y foco los maneja el navegador). #}
+    <dialog id="visor-galeria" class="m-auto max-w-4xl overflow-hidden rounded-lg bg-bosque p-0 backdrop:bg-black/80" aria-label="Imagen ampliada">
+        <button type="button" data-cerrar class="absolute top-3 right-3 flex size-9 items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/70" aria-label="Cerrar">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+        {# Sin src a propósito: landing.js lo pone al abrir (src="" haría una petición inútil a la página). #}
+        <img alt="" class="max-h-[80vh] w-full object-contain">
+        <p class="px-4 py-3 text-center text-white empty:hidden"></p>
+    </dialog>
+</section>
+{% endif %}

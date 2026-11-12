@@ -1,0 +1,19 @@
+{# Barra lateral "Archivo" por mes, compartida por el listado del blog y el detalle de un artículo.
+   Variables: grupos; enlace_base (prefijo de los #anclas); mes_actual (opcional, se marca activo). #}
+<h2 class="mb-4 font-serif text-lg font-bold text-tinta">Archivo</h2>
+{% if grupos %}
+<ul class="border-t border-linea">
+    {% for grupo in grupos %}
+    <li class="border-b border-linea">
+        <a href="{{ enlace_base }}#{{ grupo.key }}" data-objetivo="{{ grupo.key }}" {% if grupo.key == mes_actual %}data-activo aria-current="page"{% endif %}
+           class="flex items-center justify-between gap-2 px-0.5 py-3 text-sm font-medium text-gris transition-all hover:text-tinta
+                  data-activo:border-l-2 data-activo:border-oro data-activo:ps-2 data-activo:font-semibold data-activo:text-bosque">
+            <span>{{ grupo.label }}</span>
+            <span class="rounded-full bg-bosque/6 px-2 py-0.5 text-xs text-gris">{{ grupo.articulos | length }}</span>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="text-sm text-gris">Aún no hay artículos.</p>
+{% endif %}

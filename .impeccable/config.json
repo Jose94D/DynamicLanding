@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "backend/templates/public/modulos/gallery.html"
+        ],
+        "createdAt": "2026-11-12T18:52:30.381Z",
+        "reason": "Claude: the img lives in a closed <dialog>; landing.js sets src before showModal(), so it never renders empty"
+      }
+    ]
+  }
+}

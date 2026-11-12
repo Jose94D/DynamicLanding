@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ seo.meta_titulo if seo else 'Mi Landing Page' }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ seo.meta_descripcion if seo else '' }}{% endblock %}">
+    {% if seo and seo.og_image %}
+    <meta property="og:image" content="{{ url_for('static', filename='img/' ~ seo.og_image) }}">
+    {% endif %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <!-- CSS compilado con Tailwind (fuente: static/css/landing.src.css) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+</head>
+<body class="flex min-h-screen flex-col bg-crema font-sans text-tinta antialiased">
+    <a href="#principal" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2">Saltar al contenido</a>
+
+    {% include 'public/partials/navbar.html' %}
+
+    <main id="principal" class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-bosque py-6 text-center text-sm text-white/60">
+        <p>&copy; Dynamic Landing CMS</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/landing.js') }}" defer></script>
+</body>
+</html>

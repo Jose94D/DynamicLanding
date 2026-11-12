@@ -1,0 +1,50 @@
+{% if about %}
+{# Orden y visibilidad de los bloques internos (historia / misión / imagen) vienen del panel. #}
+{% set about_bloques = about_bloques | default([
+    {'id': 'historia', 'activo': 1},
+    {'id': 'mision',   'activo': 1},
+    {'id': 'imagen',   'activo': 1}
+]) %}
+
+<section class="seccion" id="about">
+    <div class="contenedor">
+        <header class="mb-[clamp(2rem,4vw,3.25rem)]">
+            <p class="ceja mb-2">Sobre mí</p>
+            <h2 class="font-serif text-[clamp(1.75rem,3vw,2.4rem)] leading-tight font-semibold text-bosque">{{ about.titulo }}</h2>
+        </header>
+
+        {# Cada bloque visible se reparte el ancho: funciona con 1, 2 o 3 bloques. #}
+        <div class="flex flex-col gap-[clamp(1.75rem,4vw,4rem)] lg:flex-row lg:items-center">
+            {% for bloque in about_bloques %}
+                {% if bloque.activo %}
+
+                    {% if bloque.id == 'historia' and (about.descripcion | striptags | trim) %}
+                    <div class="contenido max-w-[62ch] min-w-0 text-[1.05rem] leading-[1.8] text-musgo lg:flex-[1.35_1_0]">
+                        {{ about.descripcion | limpiar_html }}
+                    </div>
+
+                    {% elif bloque.id == 'mision' and (about.mision | striptags | trim) %}
+                    <blockquote class="max-w-[40ch] min-w-0 lg:flex-1">
+                        <div class="contenido font-serif text-[clamp(1.2rem,1.8vw,1.5rem)] leading-normal text-bosque italic">
+                            {{ about.mision | limpiar_html }}
+                        </div>
+                        <span class="mt-6 block h-px w-11 bg-oro" aria-hidden="true"></span>
+                    </blockquote>
+
+                    {% elif bloque.id == 'imagen' and about.nombre_archivo %}
+                    {# Desaturado suave + tinte verde + marco dorado: cualquier foto se integra a la paleta. #}
+                    <figure class="relative aspect-[16/10] min-w-0 overflow-hidden rounded-md bg-bosque lg:aspect-[4/5] lg:max-w-[26rem] lg:flex-1
+                                   before:pointer-events-none before:absolute before:inset-0 before:z-10 before:bg-bosque/25
+                                   after:pointer-events-none after:absolute after:inset-3 after:z-10 after:rounded-sm after:border after:border-oro/85">
+                        <img src="{{ url_for('static', filename='uploads/about/' ~ about.nombre_archivo) }}"
+                             alt="{{ about.titulo }}" loading="lazy" decoding="async"
+                             class="size-full object-cover saturate-[.7] contrast-[.95]">
+                    </figure>
+                    {% endif %}
+
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}

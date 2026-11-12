@@ -1,0 +1,27 @@
+{% if social %}
+<section class="seccion bg-white" id="social">
+    <div class="contenedor">
+        <header class="mx-auto mb-10 max-w-2xl text-center">
+            <h2 class="titulo-seccion"><i class="bi bi-instagram me-2 text-oro" aria-hidden="true"></i>Síguenos en Instagram</h2>
+            <p class="mt-2 text-musgo">Nuestra publicación más reciente.</p>
+        </header>
+
+        <a href="{{ social.permalink }}" target="_blank" rel="noopener"
+           class="relative mx-auto block max-w-sm overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-linea transition hover:shadow-md">
+            {% if social.imagen_mostrar %}
+            <img src="{{ social.imagen_mostrar }}" class="w-full" alt="Última publicación de Instagram" loading="lazy">
+            {% endif %}
+            {% if social.media_type == 'VIDEO' %}
+            <span class="absolute top-2 right-2 rounded bg-bosque px-2 py-1 text-xs text-white">
+                <i class="bi bi-play-fill" aria-hidden="true"></i> Video
+            </span>
+            {% endif %}
+            {% if social.caption %}
+            <p class="p-4 text-sm text-tinta">
+                {{ social.caption[:150] }}{% if social.caption | length > 150 %}…{% endif %}
+            </p>
+            {% endif %}
+        </a>
+    </div>
+</section>
+{% endif %}

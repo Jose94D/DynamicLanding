@@ -1,0 +1,10 @@
+<!-- Navbar del sitio público (una sola fuente para la home, el blog y los artículos). -->
+<nav class="bg-bosque text-white" aria-label="Principal">
+    <div class="contenedor flex items-center justify-between py-4">
+        <a class="font-serif text-lg font-semibold" href="{{ url_for('public.index') }}">Dynamic Landing CMS</a>
+        <ul class="flex gap-6 text-sm text-white/75">
+            <li><a class="hover:text-oro-claro" href="{{ url_for('public.index') }}">Inicio</a></li>
+            <li><a class="hover:text-oro-claro" href="{{ url_for('public.blog_archivo') }}">Blog</a></li>
+        </ul>
+    </div>
+</nav>
