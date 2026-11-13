@@ -1,0 +1,17 @@
+{# Banner de cookies. Siempre está en la página (oculto si ya hay decisión) para poder reabrirlo desde
+   "Preferencias de cookies". Aceptar y Rechazar tienen el mismo peso visual: rechazar debe ser igual de fácil. #}
+<section id="banner-cookies" aria-labelledby="banner-cookies-titulo" {% if consentimiento() %}hidden{% endif %}
+         class="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-2xl rounded-xl bg-white p-5 text-sm text-tinta shadow-[0_10px_40px_rgb(16_38_31/.25)] ring-1 ring-linea sm:p-6">
+    <h2 id="banner-cookies-titulo" tabindex="-1" class="mb-2 font-serif text-lg font-semibold text-bosque focus:outline-none">Cookies y privacidad</h2>
+    <p class="mb-4 leading-relaxed text-musgo">
+        Usamos cookies propias para entender cómo se usa el sitio (visitas, origen y dispositivo) y mejorarlo.
+        Solo las activamos si aceptas; si no, el sitio funciona igual. Puedes cambiar tu decisión cuando quieras.
+        <a href="{{ url_for('public.privacidad') }}" class="font-medium text-bosque underline decoration-oro underline-offset-[3px] hover:text-oro">Política de privacidad</a>
+    </p>
+    <p data-error-cookies hidden role="alert" class="mb-3 text-red-700">No pudimos guardar tu decisión. Inténtalo de nuevo.</p>
+    <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
+        {% set boton = 'rounded-lg border border-bosque px-5 py-2.5 font-medium text-bosque transition hover:bg-bosque hover:text-white focus-visible:ring-2 focus-visible:ring-oro focus-visible:ring-offset-2 focus-visible:outline-none' %}
+        <button type="button" data-decision="rechazado" class="{{ boton }}">Rechazar</button>
+        <button type="button" data-decision="aceptado" class="{{ boton }}">Aceptar</button>
+    </div>
+</section>

@@ -33,7 +33,23 @@ export type Articulo = ArticuloResumen & { contenido: string }
 export type Mensaje = { id: number; nombre: string; email: string; mensaje: string; fecha_envio: string; leido: boolean }
 
 export type Serie = { periodo: string; total: number }
-export type Analiticas = {
-  total: number; anio_actual: number; mes_actual: number; semana_actual: number
-  por_anio: Serie[]; por_mes: Serie[]; por_semana: Serie[]
+export type Conteo = { nombre: string; total: number }
+type NumerosConsentidas = {
+  visitas: number; visitantes_unicos: number; nuevos: number; recurrentes: number; paginas_vistas: number
+  visitas_con_envio: number; tasa_conversion: number
+  duracion_media: number; aperturas_galeria: number; navegaciones_galeria: number; visitas_con_galeria: number
+}
+type Numeros = { paginas_vistas: number; mensajes_recibidos: number; consentidas: NumerosConsentidas }
+export type Analiticas = Numeros & {
+  dias: number; desde: string; hasta: string
+  serie: Serie[]
+  consentidas: NumerosConsentidas & { por_origen: Conteo[]; por_dispositivo: Conteo[]; por_navegador: Conteo[] }
+  anterior: Numeros
+}
+
+export type Legal = { razon_social: string | null; rut: string | null; email_privacidad: string | null }
+
+export type RegistroConsentimientos = {
+  ultimos_30_dias: Record<string, number>
+  recientes: { fecha: string; decision: string; version: string; referencia: string }[]
 }

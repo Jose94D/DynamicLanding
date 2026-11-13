@@ -7,7 +7,10 @@
     "css:watch": "tailwindcss -i backend/static/css/landing.src.css -o backend/static/css/landing.css --watch"
   },
   "devDependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0",
     "@tailwindcss/cli": "^4.3.5",
+    "bootstrap-icons": "^1.13.2",
     "tailwindcss": "^4.3.5"
   }
 }

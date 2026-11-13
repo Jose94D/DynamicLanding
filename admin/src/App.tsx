@@ -14,6 +14,7 @@ import { Login } from './paginas/Login'
 import { Mensajes } from './paginas/Mensajes'
 import { Modulos } from './paginas/Modulos'
 import { Password } from './paginas/Password'
+import { Privacidad } from './paginas/Privacidad'
 import { Redes } from './paginas/Redes'
 import { Seo } from './paginas/Seo'
 import { Servicios } from './paginas/Servicios'
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="redes" element={<Redes />} />
         <Route path="seo" element={<Seo key="seo" ruta="/api/admin/seo" titulo="SEO del sitio" />} />
         <Route path="seo-blog" element={<Seo key="seo-blog" ruta="/api/admin/seo/blog" titulo="SEO del blog" />} />
+        <Route path="privacidad" element={<Privacidad />} />
         <Route path="analiticas" element={<Analiticas />} />
         <Route path="password" element={<Password />} />
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -63,4 +63,5 @@ templates.env.globals.update(
     url_for=_url_for,
     get_flashed_messages=_get_flashed_messages,
     csrf_input=_csrf_input,
+    csrf_token=pass_context(lambda context: csrf_token(context['request'])),
 )

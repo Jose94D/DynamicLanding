@@ -6,6 +6,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from . import models as m
+from .analiticas import registrar_en_sesion_actual
+from .clasificar import es_bot
+from .consentimiento import VERSION_POLITICA
 from .db import get_db
 from .web import flash, templates, verificar_csrf
 
@@ -18,7 +21,9 @@ MESES_ES = {
 
 
 def registrar_visita(request: Request, db: Session = Depends(get_db)):
-    """Registra cada visita a una página pública (para el módulo de Analíticas)."""
+    """Registra cada visita a una página pública (conteo anónimo, sin cookies). Los bots no cuentan."""
+    if es_bot(request.headers.get('user-agent')):
+        return
     db.add(m.AnaliticaVisita(ruta=request.url.path))
     db.commit()
 
@@ -90,6 +95,17 @@ def blog_archivo(request: Request, db: Session = Depends(get_db)):
     })
 
 
+@router.get('/privacidad', name='public.privacidad')
+def privacidad(request: Request, db: Session = Depends(get_db)):
+    legal = db.get(m.ConfiguracionLegal, 1)
+    contacto = db.get(m.ContactDatos, 1)
+    return templates.TemplateResponse(request, 'public/privacidad.html', {
+        'legal': legal,
+        'email': (legal and legal.email_privacidad) or (contacto and contacto.email),
+        'version': VERSION_POLITICA,
+    })
+
+
 @router.post('/contacto', name='public.enviar_contacto', dependencies=[Depends(verificar_csrf)])
 def enviar_contacto(
     request: Request,
@@ -112,6 +128,7 @@ def enviar_contacto(
         return volver
 
     db.add(m.MensajeContacto(nombre=nombre, email=email, mensaje=mensaje))
+    registrar_en_sesion_actual(request, db, 'form_submit', '/contacto')  # conversión, solo con consentimiento
     db.commit()
     flash(request, '¡Gracias! Tu mensaje fue enviado correctamente, te contactaremos pronto.', 'success')
     return volver

@@ -60,6 +60,7 @@ def sembrar(db):
     _agregar_si_falta(db, m.ConfiguracionSeo, id=1, meta_titulo='Mi Landing Page',
                       meta_descripcion='Descripción por defecto para motores de búsqueda')
     _agregar_si_falta(db, m.ConfiguracionSeoBlog, id=1, meta_titulo='Blog', meta_descripcion='Artículos y novedades')
+    _agregar_si_falta(db, m.ConfiguracionLegal, id=1)
 
     # Admin: usa ADMIN_USERNAME/ADMIN_PASSWORD del entorno. Si no hay contraseña, genera una y la
     # muestra UNA sola vez en consola: no queda guardada en ningún archivo.

@@ -51,6 +51,15 @@ def test_borrador_visible_para_admin(admin):
     assert admin.get(f'/articulo/{id_}').status_code == 200
 
 
+def test_comando_cambiar_clave(client, monkeypatch):
+    from app import cambiar_clave
+    monkeypatch.setattr(cambiar_clave, 'getpass', lambda _: 'clave-nueva-123')
+    cambiar_clave.main(['admin'])
+    token = client.get('/api/auth/sesion').json()['csrf_token']
+    r = client.post('/api/auth/login', json={'username': 'admin', 'password': 'clave-nueva-123'}, headers={'X-CSRFToken': token})
+    assert r.status_code == 200
+
+
 # ---------- Contenido ----------
 def test_hero_y_modulos(admin):
     assert admin.put('/api/admin/hero', json={'titulo': '  Nuevo título  '}).json()['titulo'] == 'Nuevo título'
@@ -136,9 +145,11 @@ def test_mensajes_y_contador_de_no_leidos(admin, db):
     assert admin.get('/api/admin/mensajes').json()['no_leidos'] == 0
 
 
-def test_analiticas_cuenta_visitas(admin):
+def test_analiticas_cuenta_paginas_vistas_anonimas(admin):
     admin.get('/')
     admin.get('/blog')
-    datos = admin.get('/api/admin/analiticas').json()
-    assert datos['total'] == datos['anio_actual'] == datos['mes_actual'] == datos['semana_actual'] == 2
-    assert len(datos['por_mes']) == 1 and datos['por_mes'][0]['total'] == 2
+    datos = admin.get('/api/admin/analiticas?dias=7').json()
+    assert datos['paginas_vistas'] == 2
+    assert len(datos['serie']) == 7 and datos['serie'][-1]['total'] == 2  # 7 días sin huecos; hoy al final
+    assert admin.get('/api/admin/analiticas?dias=365').json()['serie'][-1]['total'] == 2  # por mes
+    assert admin.get('/api/admin/analiticas?dias=15').status_code == 422

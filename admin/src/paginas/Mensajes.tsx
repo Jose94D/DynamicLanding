@@ -18,9 +18,10 @@ export function Mensajes() {
             <p className="text-sm text-zinc-600">{mensajes.length} mensajes · {no_leidos} sin leer</p>
             <ul className="space-y-3">
               {mensajes.map((m) => (
-                <li key={m.id} className={`tarjeta ${m.leido ? '' : 'border-l-4 border-l-zinc-900'}`}>
+                <li key={m.id} className="tarjeta">
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <p className="font-medium text-zinc-900">{m.nombre}</p>
+                    {!m.leido && <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-xs text-white">Nuevo</span>}
                     <a href={`mailto:${m.email}`} className="text-sm text-zinc-600 hover:underline">{m.email}</a>
                     <span className="ms-auto text-xs text-zinc-500">{fechaHora(m.fecha_envio)}</span>
                   </div>

@@ -7,7 +7,7 @@ adaptadas a MySQL/MariaDB:
 """
 from datetime import datetime
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, Integer, String, Text, func
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, String, Text, func, text
 from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -174,6 +174,30 @@ class ConfiguracionSeoBlog(Base):
 
 
 # ==========================================================
+# PRIVACIDAD (Ley 21.719)
+# ==========================================================
+class ConfiguracionLegal(Base):
+    """Responsable de los datos, como aparece en la política de privacidad."""
+    __tablename__ = 'configuracion_legal'
+    __table_args__ = _singleton('configuracion_legal')
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=False)
+    razon_social: Mapped[str | None] = mapped_column(Text)
+    rut: Mapped[str | None] = mapped_column(String(20))
+    email_privacidad: Mapped[str | None] = mapped_column(String(255))
+
+
+class Consentimiento(Base):
+    """Registro de cada decisión sobre cookies analíticas: prueba de cuándo y cómo se dio o retiró."""
+    __tablename__ = 'consentimientos'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    fecha: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), index=True)
+    decision: Mapped[str] = mapped_column(String(10))  # aceptado / rechazado / retirado
+    version: Mapped[str] = mapped_column(String(20))   # versión de la política que vio
+    # Id aleatorio que también va en la cookie: une la decisión del navegador con esta fila, sin datos personales.
+    referencia: Mapped[str] = mapped_column(String(32), index=True)
+
+
+# ==========================================================
 # REDES SOCIALES (una fila por plataforma)
 # ==========================================================
 class ConfiguracionRedes(Base):
@@ -192,6 +216,36 @@ class AnaliticaVisita(Base):
     __tablename__ = 'analiticas_visitas'
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     fecha: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), index=True)
+    ruta: Mapped[str] = mapped_column(String(500))
+
+
+class AnaliticaSesion(Base):
+    """Una visita de alguien que aceptó las cookies analíticas. Los ids son aleatorios, no identifican a la persona."""
+    __tablename__ = 'analiticas_sesiones'
+    session_id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    visitor_id: Mapped[str] = mapped_column(String(32), index=True)
+    inicio: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), index=True)
+    ultima_actividad: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    # Tiempo con la página visible, sumando los latidos que envía el navegador (no "último evento - primero").
+    segundos_activos: Mapped[int] = mapped_column(Integer, default=0, server_default=text('0'))
+    # Se fijan al crear la sesión: no cambian durante la visita.
+    dispositivo: Mapped[str | None] = mapped_column(String(10))   # movil / tablet / escritorio
+    navegador: Mapped[str | None] = mapped_column(String(30))
+    sistema: Mapped[str | None] = mapped_column(String(30))
+    origen: Mapped[str | None] = mapped_column(String(15))        # directo / buscador / social / referido / campaña
+    referente: Mapped[str | None] = mapped_column(String(255))    # solo el dominio de donde llegó, nunca la URL completa
+    utm_source: Mapped[str | None] = mapped_column(String(100))
+    utm_medium: Mapped[str | None] = mapped_column(String(100))
+    utm_campaign: Mapped[str | None] = mapped_column(String(100))
+
+
+class AnaliticaEvento(Base):
+    """Lo que pasa dentro de una visita (por ahora 'pageview'). Se borra junto con su sesión."""
+    __tablename__ = 'analiticas_eventos'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey('analiticas_sesiones.session_id', ondelete='CASCADE'), index=True)
+    fecha: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), index=True)
+    tipo: Mapped[str] = mapped_column(String(30))
     ruta: Mapped[str] = mapped_column(String(500))
 
 

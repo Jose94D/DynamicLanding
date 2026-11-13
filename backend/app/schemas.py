@@ -1,5 +1,5 @@
 """Esquemas Pydantic de la API del admin: validan lo que entra y documentan lo que sale (/api/docs)."""
-from datetime import datetime
+from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -102,6 +102,24 @@ class Seo(Esquema):
     og_image: str | None = None
 
 
+class Legal(Esquema):
+    razon_social: str | None = None
+    rut: str | None = Field(None, max_length=20)
+    email_privacidad: str | None = Field(None, max_length=255)
+
+
+class ConsentimientoOut(Esquema):
+    fecha: datetime
+    decision: str
+    version: str
+    referencia: str
+
+
+class RegistroConsentimientos(BaseModel):
+    ultimos_30_dias: dict[str, int]  # decisión -> cantidad
+    recientes: list[ConsentimientoOut]
+
+
 class RedIn(Esquema):
     access_token: str | None = Field(None, description='Omitir o null para conservar el token guardado.')
     account_id: str = ''
@@ -187,11 +205,42 @@ class Serie(BaseModel):
     total: int
 
 
-class AnaliticasOut(BaseModel):
+class Conteo(BaseModel):
+    nombre: str
     total: int
-    anio_actual: int
-    mes_actual: int
-    semana_actual: int
-    por_anio: list[Serie]
-    por_mes: list[Serie]
-    por_semana: list[Serie]
+
+
+class NumerosConsentidas(BaseModel):
+    """Métricas que solo existen para quienes aceptaron las cookies analíticas."""
+    visitas: int
+    visitantes_unicos: int
+    nuevos: int
+    recurrentes: int
+    paginas_vistas: int
+    visitas_con_envio: int      # visitas que enviaron el formulario de contacto
+    tasa_conversion: float      # % de visitas con envío
+    duracion_media: int         # segundos con la página visible, promedio por visita
+    aperturas_galeria: int
+    navegaciones_galeria: int
+    visitas_con_galeria: int
+
+
+class Consentidas(NumerosConsentidas):
+    por_origen: list[Conteo]
+    por_dispositivo: list[Conteo]
+    por_navegador: list[Conteo]
+
+
+class Numeros(BaseModel):
+    paginas_vistas: int      # conteo anónimo: incluye a quienes rechazaron las cookies
+    mensajes_recibidos: int  # todos los mensajes del formulario, con o sin cookies
+    consentidas: NumerosConsentidas
+
+
+class AnaliticasOut(Numeros):
+    dias: int
+    desde: date
+    hasta: date
+    serie: list[Serie]       # páginas vistas por día (o por mes en 365 días)
+    consentidas: Consentidas
+    anterior: Numeros        # las mismas cifras del período anterior de igual largo, para comparar

@@ -1,13 +1,24 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.exc import OperationalError
 from starlette.middleware.sessions import SessionMiddleware
 
-from . import public
-from .api import auth, blog, contenido, listas
+from . import analiticas, consentimiento, public
+from .api import auth, blog, contenido, listas, metricas
 from .config import ADMIN_DIST, COOKIE_SECURE, MAX_SUBIDA_MB, SECRET_KEY, STATIC_DIR
 
 app = FastAPI(title='DynamicLanding API', docs_url='/api/docs', redoc_url=None, openapi_url='/api/openapi.json')
+
+
+@app.exception_handler(OperationalError)
+async def base_no_disponible(request: Request, exc: OperationalError):
+    """Sin conexión a MySQL: mensaje claro en vez de un 500 con traza. El detalle queda en la consola."""
+    print(f'⚠️  Error de base de datos: {exc.orig}')
+    return PlainTextResponse(
+        'No se pudo conectar a la base de datos. En desarrollo: powershell -File scripts\\iniciar_mariadb.ps1',
+        status_code=503,
+    )
 
 
 @app.middleware('http')
@@ -28,7 +39,7 @@ app.add_middleware(
     https_only=COOKIE_SECURE,
 )
 app.mount('/static', StaticFiles(directory=STATIC_DIR), name='static')
-for modulo in (auth, contenido, listas, blog, public):
+for modulo in (auth, contenido, listas, blog, metricas, consentimiento, analiticas, public):
     app.include_router(modulo.router)
 
 

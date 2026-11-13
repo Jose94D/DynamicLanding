@@ -11,7 +11,7 @@ def _token(client):
 
 
 def _contar(db, modelo):
-    db.expire_all()
+    db.rollback()  # cierra la transacción: MariaDB (REPEATABLE READ) si no, repite la foto anterior
     return db.scalar(select(func.count()).select_from(modelo))
 
 
@@ -49,6 +49,24 @@ def test_contacto_rechaza_email_invalido_y_honeypot(client, db):
     assert 'correo electrónico válido' in r.text
     client.post('/contacto', data={'csrf_token': token, 'nombre': 'Bot', 'email': 'b@x.cl', 'mensaje': 'spam', 'sitio_web': 'x'})
     assert _contar(db, m.MensajeContacto) == 0
+
+
+def test_sin_base_de_datos_responde_503_con_mensaje(client):
+    from sqlalchemy.exc import OperationalError
+
+    from app.db import get_db
+    from app.main import app
+
+    def caida():
+        raise OperationalError('SELECT 1', {}, Exception("Can't connect"))
+        yield  # noqa: unreachable — la dependencia debe ser un generador, como get_db
+
+    app.dependency_overrides[get_db] = caida
+    try:
+        r = client.get('/')
+    finally:
+        app.dependency_overrides.clear()
+    assert r.status_code == 503 and 'iniciar_mariadb' in r.text
 
 
 def test_contacto_sin_csrf_es_rechazado(client, db):

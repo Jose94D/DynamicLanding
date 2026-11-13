@@ -1,29 +1,72 @@
-<img width="2064" height="512" alt="DynamicLanding_Banner" src="https://github.com/user-attachments/assets/71126984-2098-4889-a87f-ddfca9c8fa28" />
+<p align="center">
+  <img width="2064" height="512" alt="DynamicLanding, CMS modular para landing pages comerciales" src="https://github.com/user-attachments/assets/71126984-2098-4889-a87f-ddfca9c8fa28" />
+</p>
 
-# DynamicLanding
+**DynamicLanding** es un CMS modular para **landing pages comerciales**. El dueño del sitio edita el contenido, el orden y la visibilidad de las secciones, el blog, el SEO, las redes sociales, la privacidad y las analíticas desde un **panel de administración privado**, sin tocar código. La API está hecha en **FastAPI**, el panel en **React + TypeScript** y la landing se renderiza en el servidor con Tailwind sobre **MySQL/MariaDB**.
 
-> CMS modular para landing pages comerciales
+> **Estado:** en desarrollo. Migrado de Flask + SQLite + Bootstrap al stack actual; faltan la integración continua y el despliegue en hosting cPanel.
 
-**DynamicLanding** es un sistema web autogestionable para crear y administrar **landing pages comerciales**. El dueño del sitio edita contenido, orden y visibilidad de las secciones, blog, SEO, redes sociales y analíticas desde un **panel de administración privado**, sin tocar código.
+## Capturas
 
-Proyecto fullstack: **API REST en FastAPI**, **panel en React + TypeScript**, **landing renderizada en el servidor** con Tailwind y **MySQL/MariaDB**.
+<!-- Las capturas van en docs/capturas/ en pares de 420px, igual que en GunplaScrapper-Chile. Ejemplo:
+<p align="center">
+  <img src="docs/capturas/landing.png" width="420" alt="Landing pública" />
+  <img src="docs/capturas/blog.png" width="420" alt="Blog" />
+</p>
+-->
 
----
+* **Landing:** las secciones aparecen en el orden y con la visibilidad que se definen en el panel.
+* **Blog:** archivo agrupado por mes y artículos con su propio SEO.
+* **Privacidad:** banner de cookies y política de privacidad editable.
 
-## Stack
+### Panel de administración
 
-| Capa | Tecnología | Por qué |
-| --- | --- | --- |
-| **Backend / API** | Python 3.11+, **FastAPI**, Pydantic | API REST tipada y documentada automáticamente (OpenAPI en `/api/docs`). |
-| **ORM y migraciones** | **SQLAlchemy 2**, **Alembic** | Modelos declarativos y esquema versionado. |
-| **Base de datos** | **MySQL / MariaDB** (PyMySQL) | Disponible en cualquier hosting cPanel. |
-| **Panel admin** | **React 19**, **TypeScript**, **Vite**, **TanStack Query**, React Router | SPA rápida, con caché de datos y actualizaciones optimistas. |
-| **Estilos** | **Tailwind CSS 4** | Panel y landing comparten el mismo enfoque de utilidades. |
-| **Landing pública** | Jinja2 (renderizado en el servidor) + JS sin dependencias | HTML listo desde el servidor: SEO completo y carga liviana (~38 KB de CSS). |
-| **Librerías del panel** | dnd-kit, Quill 2, Chart.js, Bootstrap Icons | Arrastrar y soltar accesible, editor enriquecido y gráficos. |
-| **Tests** | pytest + TestClient contra una base MySQL real | Las consultas se prueban con el mismo motor que producción. |
+* **Acceso:** login con freno a fuerza bruta.
+* **Diseño:** activar, ocultar y reordenar las secciones arrastrando.
+* **Contenidos:** hero, sobre nosotros (bloques reordenables), carrusel, servicios (selector de íconos), galería, testimonios y contacto.
+* **Blog:** crear, editar, publicar o dejar como borrador, con editor enriquecido y vista previa.
+* **Mensajes:** formulario de contacto con contador de no leídos.
+* **SEO:** título, descripción y Open Graph del sitio y del blog, con validación de largo.
+* **Redes:** conexión con la API de Instagram.
+* **Privacidad:** textos legales y versión de la política.
+* **Analíticas:**
+  * Visitas por semana, mes y año, con gráfico y comparativas.
+  * Sesiones, eventos, dispositivo, navegador y origen del tráfico (solo con consentimiento).
+* **Cuenta:** cambio de contraseña.
 
-### Arquitectura
+## Funciones
+
+**Ya funcionan:**
+
+* Landing modular renderizada en el servidor, con carrusel, galería con visor ampliado y testimonios deslizables sin dependencias de JavaScript externas.
+* Diseño responsivo y accesible: enlace para saltar al contenido, controles con nombre y respeto a `prefers-reduced-motion`.
+* Panel React con caché de datos y actualizaciones optimistas.
+* Consentimiento de cookies y retención de datos según la Ley 21.719.
+
+**Próximos pasos:** integración continua y despliegue en hosting cPanel.
+
+## Seguridad
+
+* Sesión en cookie firmada `httpOnly` y `SameSite=Lax`, renovada en cada login.
+* Token **CSRF** obligatorio en todo lo que modifica datos (API y formularios).
+* Freno a fuerza bruta en el login (5 intentos por IP cada 15 minutos).
+* El HTML del editor se sanea con **bleach** antes de mostrarse.
+* Las imágenes subidas se validan de verdad, se redimensionan y se les quitan los metadatos EXIF/GPS.
+* El token de Instagram nunca sale de la API: solo se informa si existe.
+* Las analíticas detalladas solo se registran si el visitante acepta las cookies; los ids de sesión y visitante son `httpOnly`.
+
+## Tecnología
+
+| Pieza | Elección |
+| --- | --- |
+| Backend / API | Python 3.11+, **FastAPI**, Pydantic (OpenAPI en `/api/docs`) |
+| ORM y migraciones | **SQLAlchemy 2**, **Alembic** |
+| Base de datos | **MySQL / MariaDB** (PyMySQL), disponible en cualquier hosting cPanel |
+| Panel admin | **React 19**, **TypeScript**, **Vite**, **TanStack Query**, React Router |
+| Estilos | **Tailwind CSS 4** en el panel y en la landing |
+| Landing pública | Jinja2 renderizado en el servidor + JS sin dependencias |
+| Librerías del panel | dnd-kit, Quill 2, Chart.js, Bootstrap Icons |
+| Tests | pytest + TestClient contra una base MySQL real |
 
 ```text
                  ┌───────────────────────────── FastAPI ─────────────────────────────┐
@@ -36,92 +79,27 @@ Proyecto fullstack: **API REST en FastAPI**, **panel en React + TypeScript**, **
                  └───────────────────────────────────────────────────────────────────┘
 ```
 
----
+### Base de datos
 
-## Funcionalidades
-
-**Panel de administración** (`/admin`)
-
-* **Diseño y visibilidad:** activar/ocultar y reordenar las secciones de la landing arrastrando.
-* **Contenidos:** hero, sobre nosotros (con bloques reordenables), carrusel, servicios (con selector de íconos), galería, testimonios y contacto.
-* **Blog:** crear, editar, publicar o dejar como borrador, con editor enriquecido y vista previa de borradores.
-* **Mensajes** del formulario de contacto, con contador de no leídos.
-* **SEO** del sitio y del blog (título, descripción, Open Graph) con validación de largo.
-* **Redes sociales:** conexión con la API de Instagram.
-* **Analíticas internas:** visitas por semana, mes y año, con gráfico.
-
-**Landing pública**
-
-* Secciones que se renderizan en el orden y con la visibilidad definidos en el panel.
-* Carrusel, galería con visor ampliado y testimonios deslizables, sin dependencias de JavaScript externas.
-* Blog con archivo agrupado por mes.
-* Diseño responsivo y accesible (enlace para saltar al contenido, controles con nombre, respeto a `prefers-reduced-motion`).
-
-**Seguridad**
-
-* Sesión en cookie firmada `httpOnly` y `SameSite=Lax`, renovada en cada login.
-* Token **CSRF** obligatorio en todo lo que modifica datos (API y formularios).
-* Freno a fuerza bruta en el login (5 intentos por IP cada 15 minutos).
-* El HTML del editor se sanea con **bleach** antes de mostrarse.
-* Las imágenes subidas se validan de verdad, se redimensionan y se les quitan los metadatos EXIF/GPS.
-* El token de Instagram nunca sale de la API: solo se informa si existe.
-
----
-
-## Estructura del proyecto
-
-```text
-DynamicLanding/
-├── backend/                    # API + landing (FastAPI)
-│   ├── app/
-│   │   ├── main.py             # App, middlewares, estáticos y panel en /admin
-│   │   ├── config.py           # Configuración desde backend/.env
-│   │   ├── db.py, models.py    # SQLAlchemy: conexión y 16 tablas
-│   │   ├── schemas.py          # Esquemas Pydantic de la API
-│   │   ├── public.py           # Rutas HTML de la landing y el blog
-│   │   ├── web.py              # Jinja + helpers (url_for, flash, CSRF)
-│   │   ├── imagenes.py         # Optimización de imágenes (Pillow)
-│   │   ├── seed.py             # Datos iniciales y usuario admin
-│   │   └── api/                # auth, contenido, listas, blog/mensajes/analíticas
-│   ├── alembic/                # Migraciones del esquema
-│   ├── templates/public/       # Plantillas de la landing (Jinja + Tailwind)
-│   ├── static/                 # CSS compilado, JS de la landing y uploads/
-│   ├── scripts/                # migrar_desde_sqlite.py
-│   └── tests/                  # pytest (API, landing, saneamiento HTML)
-│
-├── admin/                      # Panel React + TypeScript (Vite)
-│   └── src/
-│       ├── api.ts              # Cliente de la API (sesión, CSRF, errores)
-│       ├── componentes/        # Layout, lista ordenable, editor, selector de íconos…
-│       └── paginas/            # Una pantalla por sección del panel
-│
-├── package.json                # Compila el CSS de la landing (Tailwind CLI)
-└── scripts/iniciar_mariadb.ps1 # Arranca la MariaDB de desarrollo (Windows)
-```
-
----
-
-## Modelo de base de datos
-
-<img width="8192" height="2326" alt="ER_model" src="https://github.com/user-attachments/assets/193edd9b-33c4-40e3-9a94-db1eb9a61e91" />
 <p align="center">
-  <em>Figura 1: Modelo relacional de la base de datos.</em>
+  <img width="8192" height="2326" alt="Modelo relacional de la base de datos" src="https://github.com/user-attachments/assets/193edd9b-33c4-40e3-9a94-db1eb9a61e91" />
 </p>
 
----
+* `contenido_*`: una tabla por sección de la landing; `modulos` guarda su orden y visibilidad.
+* `configuracion_*`: SEO, SEO del blog, textos legales y redes sociales.
+* `analiticas_visitas` cuenta visitas anónimas sin cookies; `analiticas_sesiones` y `analiticas_eventos` solo se llenan con consentimiento, que queda registrado en `consentimientos`.
+* `mensajes_contacto` y `admin` completan el esquema.
 
-## Instalación local
+## Ejecutar
 
-**Requisitos:** Python 3.11+, Node.js 20+ y un servidor MySQL o MariaDB.
-
-### 1. Clonar el repositorio
+Requisitos: Python 3.11+, Node.js 20+ y un servidor MySQL o MariaDB.
 
 ```bash
 git clone https://github.com/Jose94D/DynamicLanding.git
 cd DynamicLanding
 ```
 
-### 2. Crear la base de datos
+Crea la base de datos:
 
 ```sql
 CREATE DATABASE dynamiclanding CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -129,37 +107,56 @@ CREATE USER 'dynamiclanding'@'localhost' IDENTIFIED BY 'una-clave-segura';
 GRANT ALL PRIVILEGES ON dynamiclanding.* TO 'dynamiclanding'@'localhost';
 ```
 
-### 3. Backend
+Backend (en Linux/macOS usa `source .venv/bin/activate` y `cp`):
 
 ```bash
 cd backend
 python -m venv .venv
-.venv\Scripts\activate            # Linux/macOS: source .venv/bin/activate
+.venv\Scripts\activate
 pip install -r requirements.txt
-copy .env.example .env            # Linux/macOS: cp .env.example .env  — y completa los valores
-alembic upgrade head              # crea las tablas
-python -m app.seed                # datos iniciales + usuario admin
+copy .env.example .env
+alembic upgrade head
+python -m app.seed
 uvicorn app.main:app --reload
 ```
 
-### 4. Panel de administración
+`backend/.env`:
+
+```env
+DATABASE_URL=mysql+pymysql://usuario:clave@127.0.0.1:3306/dynamiclanding?charset=utf8mb4
+SECRET_KEY=
+```
+
+| Variable | Por defecto | Uso |
+| --- | --- | --- |
+| `SECRET_KEY` | aleatoria en cada arranque | Firma la cookie de sesión. Genérala con `python -c "import secrets; print(secrets.token_hex(32))"`. |
+| `COOKIE_SECURE` | `0` | Con `1` la cookie de sesión solo viaja por HTTPS (actívalo en producción). |
+| `ADMIN_USERNAME` | `admin` | Usuario que crea `python -m app.seed` si no existe ninguno. |
+| `ADMIN_PASSWORD` | aleatoria | Si falta, se genera y se muestra una sola vez en consola. |
+| `UPLOADS_DIR` | `backend/static/uploads` | Carpeta de imágenes subidas. |
+
+Panel de administración (FastAPI lo sirve en `/admin`):
 
 ```bash
 cd admin
 npm install
-npm run build                     # FastAPI lo sirve en /admin
+npm run build
 ```
 
 Para trabajar en el panel con recarga en vivo usa `npm run dev` (http://localhost:5173/admin/): Vite reenvía la API al backend del puerto 8000.
 
-### 5. CSS de la landing
+CSS de la landing, desde la raíz del proyecto (`npm run css:watch` mientras editas plantillas):
 
 ```bash
-npm install                       # en la raíz del proyecto
-npm run css                       # o npm run css:watch mientras editas plantillas
+npm install
+npm run css
 ```
 
-### Accesos
+Cambiar la contraseña de un usuario del panel (desde `backend/`):
+
+```bash
+python -m app.cambiar_clave
+```
 
 | | URL |
 | --- | --- |
@@ -167,11 +164,21 @@ npm run css                       # o npm run css:watch mientras editas plantill
 | Panel admin | http://127.0.0.1:8000/admin |
 | Documentación de la API | http://127.0.0.1:8000/api/docs |
 
----
+> `python -m app.retencion` (desde `backend/`) borra las analíticas con más de 13 meses y los mensajes de contacto con más de 24, como promete la política de privacidad. En producción se programa una vez al día con un cron de cPanel.
 
-## Tests
+### MariaDB como servicio (Windows, opcional)
 
-Los tests corren contra una base **aparte** (`<tu base>_test`, se vacía en cada test), nunca contra la de desarrollo:
+`scripts/crear_servicio_mariadb.ps1` crea una MariaDB propia del proyecto como servicio (puerto 3307, datos en `C:\ProgramData\DynamicLanding`): arranca sola con Windows y se apaga en orden al apagar el equipo. Toma usuario y clave de `backend/.env` e importa el respaldo más reciente de `respaldos/*.sql`. Desde la raíz del proyecto, en una PowerShell **como administrador**:
+
+```bash
+powershell -ExecutionPolicy Bypass -File scripts\crear_servicio_mariadb.ps1
+```
+
+Después, `scripts/iniciar_mariadb.ps1` (lo que corre VS Code antes de F5) solo comprueba que el servicio esté arriba.
+
+### Tests
+
+Corren contra una base **aparte** (`<tu base>_test`, se vacía en cada test), nunca contra la de desarrollo:
 
 ```sql
 CREATE DATABASE dynamiclanding_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -184,13 +191,41 @@ pip install -r requirements-dev.txt
 pytest
 ```
 
----
+## Estructura
 
-## Estado del proyecto
-
-**En desarrollo.** Migrado de Flask + SQLite + Bootstrap al stack actual; próximos pasos: integración continua y despliegue en hosting cPanel.
-
----
+```text
+DynamicLanding/
+├── backend/                    # API + landing (FastAPI)
+│   ├── app/
+│   │   ├── main.py             # App, middlewares, estáticos y panel en /admin
+│   │   ├── config.py           # Configuración desde backend/.env
+│   │   ├── db.py, models.py    # SQLAlchemy: conexión y tablas
+│   │   ├── schemas.py          # Esquemas Pydantic de la API
+│   │   ├── public.py           # Rutas HTML de la landing y el blog
+│   │   ├── web.py              # Jinja + helpers (url_for, flash, CSRF)
+│   │   ├── analiticas.py       # Eventos de analíticas con consentimiento
+│   │   ├── clasificar.py       # Dispositivo, navegador, origen y bots
+│   │   ├── consentimiento.py   # Banner de cookies (Ley 21.719)
+│   │   ├── retencion.py        # Borrado de datos antiguos
+│   │   ├── cambiar_clave.py    # Cambio de contraseña por consola
+│   │   ├── imagenes.py         # Optimización de imágenes (Pillow)
+│   │   ├── seed.py             # Datos iniciales y usuario admin
+│   │   └── api/                # auth, contenido, listas, blog, mensajes, métricas
+│   ├── alembic/                # Migraciones del esquema
+│   ├── templates/public/       # Plantillas de la landing (Jinja + Tailwind)
+│   ├── static/                 # CSS compilado, JS de la landing y uploads/
+│   ├── scripts/                # migrar_desde_sqlite.py
+│   └── tests/                  # pytest
+│
+├── admin/                      # Panel React + TypeScript (Vite)
+│   └── src/
+│       ├── api.ts              # Cliente de la API (sesión, CSRF, errores)
+│       ├── componentes/        # Layout, lista ordenable, editor, selector de íconos…
+│       └── paginas/            # Una pantalla por sección del panel
+│
+├── package.json                # Compila el CSS de la landing (Tailwind CLI)
+└── scripts/                    # MariaDB de desarrollo (Windows)
+```
 
 ## Licencia
 

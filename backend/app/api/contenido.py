@@ -1,13 +1,15 @@
 """Módulos de la landing y contenido de una sola fila: hero, about, contacto, SEO y redes."""
+from datetime import datetime, timedelta
+
 from fastapi import Depends, File, Form, HTTPException, Response, UploadFile
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from .. import imagenes
 from .. import models as m
 from ..db import get_db
-from ..schemas import (AboutOut, ContactoIn, ContactoOut, Hero, ModuloEstado, ModuloOut, OrdenSlugs, RedIn, RedOut,
-                       Seo, Visibilidad)
+from ..schemas import (AboutOut, ContactoIn, ContactoOut, Hero, Legal, ModuloEstado, ModuloOut, OrdenSlugs, RedIn, RegistroConsentimientos,
+                       RedOut, Seo, Visibilidad)
 from ..social_api import invalidar_cache
 from .comun import reordenar, router_admin
 
@@ -126,7 +128,7 @@ def ordenar_submodulos_contacto(datos: OrdenSlugs, db: Session = Depends(get_db)
 
 
 # ---------- SEO (landing y blog comparten forma y reglas) ----------
-def _guardar_seo(db, modelo, datos):
+def _guardar_fila_unica(db, modelo, datos):
     fila = db.get(modelo, 1)
     for campo, valor in datos.model_dump().items():
         setattr(fila, campo, valor)
@@ -141,7 +143,7 @@ def ver_seo(db: Session = Depends(get_db)):
 
 @router.put('/seo', response_model=Seo)
 def guardar_seo(datos: Seo, db: Session = Depends(get_db)):
-    return _guardar_seo(db, m.ConfiguracionSeo, datos)
+    return _guardar_fila_unica(db, m.ConfiguracionSeo, datos)
 
 
 @router.get('/seo/blog', response_model=Seo)
@@ -151,7 +153,29 @@ def ver_seo_blog(db: Session = Depends(get_db)):
 
 @router.put('/seo/blog', response_model=Seo)
 def guardar_seo_blog(datos: Seo, db: Session = Depends(get_db)):
-    return _guardar_seo(db, m.ConfiguracionSeoBlog, datos)
+    return _guardar_fila_unica(db, m.ConfiguracionSeoBlog, datos)
+
+
+# ---------- Privacidad: responsable de los datos ----------
+@router.get('/legal', response_model=Legal)
+def ver_legal(db: Session = Depends(get_db)):
+    return db.get(m.ConfiguracionLegal, 1)
+
+
+@router.put('/legal', response_model=Legal)
+def guardar_legal(datos: Legal, db: Session = Depends(get_db)):
+    return _guardar_fila_unica(db, m.ConfiguracionLegal, datos)
+
+
+@router.get('/legal/consentimientos', response_model=RegistroConsentimientos,
+            summary='Registro de decisiones sobre cookies (prueba del consentimiento)')
+def registro_consentimientos(db: Session = Depends(get_db)):
+    C = m.Consentimiento
+    hace_30 = datetime.now() - timedelta(days=30)
+    return RegistroConsentimientos(
+        ultimos_30_dias=dict(db.execute(select(C.decision, func.count()).where(C.fecha >= hace_30).group_by(C.decision)).all()),
+        recientes=db.scalars(select(C).order_by(C.id.desc()).limit(20)).all(),
+    )
 
 
 # ---------- Redes sociales ----------

@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "MariaDB",
+      "detail": "Arranca la MariaDB de desarrollo (puerto 3307) si no está corriendo",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/iniciar_mariadb.ps1",
+      "presentation": { "reveal": "silent", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Panel admin (Vite)",
+      "detail": "Panel React con recarga en vivo en http://localhost:5173/admin/",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": { "cwd": "${workspaceFolder}/admin" },
+      "isBackground": true,
+      "presentation": { "reveal": "silent", "panel": "dedicated" },
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": { "regexp": "^__sin_errores__$", "file": 1, "message": 1 },
+        "background": { "activeBegins": true, "beginsPattern": "VITE", "endsPattern": "ready in" }
+      }
+    },
+    {
+      "label": "CSS landing (watch)",
+      "detail": "Recompila el Tailwind de la landing al guardar plantillas",
+      "type": "shell",
+      "command": "npm run css:watch",
+      "isBackground": true,
+      "presentation": { "reveal": "silent", "panel": "dedicated" },
+      "problemMatcher": {
+        "owner": "tailwind",
+        "pattern": { "regexp": "^__sin_errores__$", "file": 1, "message": 1 },
+        "background": { "activeBegins": true, "beginsPattern": "tailwindcss", "endsPattern": "Done in" }
+      }
+    },
+    {
+      "label": "Desarrollo: MariaDB + panel + CSS",
+      "dependsOn": ["MariaDB", "Panel admin (Vite)", "CSS landing (watch)"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Compilar panel admin",
+      "detail": "Genera admin/dist, lo que sirve FastAPI en /admin",
+      "type": "shell",
+      "command": "npm run build",
+      "options": { "cwd": "${workspaceFolder}/admin" },
+      "problemMatcher": ["$tsc"]
+    }
+  ]
+}

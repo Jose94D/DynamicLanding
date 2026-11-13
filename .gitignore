@@ -14,3 +14,6 @@ __pycache__/
 
 # Dependencias de Node
 node_modules/
+
+# Respaldos locales (datos reales y hash de la clave admin)
+respaldos/

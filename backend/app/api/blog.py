@@ -1,4 +1,4 @@
-"""Blog, mensajes de contacto y analíticas de visitas."""
+"""Blog y mensajes de contacto."""
 import os
 
 from fastapi import Depends, Response
@@ -7,11 +7,11 @@ from sqlalchemy.orm import Session
 
 from .. import models as m
 from ..db import get_db
-from ..schemas import AnaliticasOut, ArticuloIn, ArticuloOut, ArticuloResumen, MensajeOut, MensajesOut, Serie
+from ..schemas import ArticuloIn, ArticuloOut, ArticuloResumen, MensajeOut, MensajesOut
 from ..utils import generar_slug
 from .comun import obtener_o_404, router_admin
 
-router = router_admin('blog, mensajes y analíticas')
+router = router_admin('blog y mensajes')
 
 
 # ---------- Blog ----------
@@ -75,31 +75,3 @@ def eliminar_mensaje(id: int, db: Session = Depends(get_db)):
     db.commit()
     return Response(status_code=204)
 
-
-# ---------- Analíticas ----------
-# Formatos de DATE_FORMAT (MySQL/MariaDB). %u = semana del año empezando en lunes, igual que el %W de SQLite.
-FORMATO_ANIO, FORMATO_MES, FORMATO_SEMANA = '%Y', '%Y-%m', '%Y-%u'
-
-
-def _serie(db, formato):
-    periodo = func.date_format(m.AnaliticaVisita.fecha, formato)
-    filas = db.execute(select(periodo, func.count()).group_by(periodo).order_by(periodo))
-    return [Serie(periodo=p, total=t) for p, t in filas]
-
-
-def _del_periodo_actual(db, formato):
-    return db.scalar(select(func.count()).select_from(m.AnaliticaVisita).where(
-        func.date_format(m.AnaliticaVisita.fecha, formato) == func.date_format(func.now(), formato)))
-
-
-@router.get('/analiticas', response_model=AnaliticasOut)
-def analiticas(db: Session = Depends(get_db)):
-    return AnaliticasOut(
-        total=db.scalar(select(func.count()).select_from(m.AnaliticaVisita)),
-        anio_actual=_del_periodo_actual(db, FORMATO_ANIO),
-        mes_actual=_del_periodo_actual(db, FORMATO_MES),
-        semana_actual=_del_periodo_actual(db, FORMATO_SEMANA),
-        por_anio=_serie(db, FORMATO_ANIO),
-        por_mes=_serie(db, FORMATO_MES),
-        por_semana=_serie(db, FORMATO_SEMANA),
-    )

@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="es">
+{# data-consentimiento: lo lee landing.js para saber si puede enviar analíticas (etapa 3). #}
+<html lang="es" data-consentimiento="{{ consentimiento() or '' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{% block title %}{{ seo.meta_titulo if seo else 'Mi Landing Page' }}{% endblock %}</title>
     <meta name="description" content="{% block description %}{{ seo.meta_descripcion if seo else '' }}{% endblock %}">
     {% if seo and seo.og_image %}
     <meta property="og:image" content="{{ url_for('static', filename='img/' ~ seo.og_image) }}">
     {% endif %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    {# Fuentes e íconos servidos desde el propio sitio: ningún tercero recibe la IP del visitante antes de su consentimiento. #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.min.css') }}">
     <!-- CSS compilado con Tailwind (fuente: static/css/landing.src.css) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
 </head>
@@ -27,7 +27,13 @@
 
     <footer class="bg-bosque py-6 text-center text-sm text-white/60">
         <p>&copy; Dynamic Landing CMS</p>
+        <p class="mt-2 flex justify-center gap-4">
+            <a href="{{ url_for('public.privacidad') }}" class="hover:text-oro-claro">Política de privacidad</a>
+            <button type="button" data-preferencias-cookies class="hover:text-oro-claro">Preferencias de cookies</button>
+        </p>
     </footer>
+
+    {% include 'public/partials/banner_cookies.html' %}
 
     <script src="{{ url_for('static', filename='js/landing.js') }}" defer></script>
 </body>

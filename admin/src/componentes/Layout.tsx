@@ -70,6 +70,7 @@ export function Layout({ sesion }: { sesion: Sesion }) {
             <li><NavLink to="/redes" className={enlace}><i className="bi bi-instagram" aria-hidden />Redes sociales</NavLink></li>
             <li><NavLink to="/seo" className={enlace}><i className="bi bi-search" aria-hidden />SEO del sitio</NavLink></li>
             <li><NavLink to="/seo-blog" className={enlace}><i className="bi bi-journal-richtext" aria-hidden />SEO del blog</NavLink></li>
+            <li><NavLink to="/privacidad" className={enlace}><i className="bi bi-shield-check" aria-hidden />Privacidad</NavLink></li>
             <li><NavLink to="/analiticas" className={enlace}><i className="bi bi-bar-chart-fill" aria-hidden />Analíticas</NavLink></li>
             <li><NavLink to="/password" className={enlace}><i className="bi bi-key-fill" aria-hidden />Cambiar contraseña</NavLink></li>
           </ul>

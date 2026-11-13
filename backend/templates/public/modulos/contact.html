@@ -28,11 +28,19 @@
                         </ul>
 
                     {% elif sub.id == 'mapa' %}
-                        <div class="relative h-full min-h-[280px] overflow-hidden rounded-md">
-                            <iframe title="Mapa: {{ contact_mapa.direccion }}"
-                                    src="https://www.google.com/maps?q={{ contact_mapa.direccion | urlencode }}&output=embed"
-                                    class="absolute inset-0 size-full border-0" allowfullscreen loading="lazy"
+                        <div class="relative h-full min-h-[280px] overflow-hidden rounded-md bg-bosque">
+                            {# Google Maps se carga solo al pulsar: antes, Google no recibe la IP ni pone cookies (ver /privacidad). #}
+                            <iframe id="mapa-contacto" title="Mapa: {{ contact_mapa.direccion }}" hidden
+                                    data-src="https://www.google.com/maps?q={{ contact_mapa.direccion | urlencode }}&output=embed"
+                                    class="absolute inset-0 size-full border-0" allowfullscreen
                                     referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 pb-16 text-center">
+                                <button type="button" data-cargar-mapa="mapa-contacto"
+                                        class="rounded-full border border-oro px-5 py-2 text-sm font-medium text-oro-claro transition hover:bg-oro hover:text-bosque focus-visible:ring-2 focus-visible:ring-oro focus-visible:outline-none">
+                                    <i class="bi bi-map" aria-hidden="true"></i> Ver mapa
+                                </button>
+                                <p class="text-xs text-white/60">Se carga desde Google Maps</p>
+                            </div>
                             <div class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-3 bg-gradient-to-t from-bosque/80 to-transparent px-4 py-3.5 text-white">
                                 <span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/60 text-xs">
                                     <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>

@@ -1,0 +1,107 @@
+{% extends "public/base.html" %}
+
+{% block title %}Política de privacidad{% endblock %}
+{% block description %}Cómo tratamos tus datos personales y qué cookies usamos.{% endblock %}
+
+{# Borrador técnico alineado con la Ley 21.719. Revisar con asesoría legal cuando se publique el reglamento de la Agencia. #}
+{% block content %}
+{% set responsable = legal.razon_social if legal and legal.razon_social else 'el titular de este sitio' %}
+<article class="contenedor max-w-3xl pt-16 pb-20">
+    <header class="mb-10">
+        <p class="ceja mb-3">Privacidad</p>
+        <h1 class="mb-3 font-serif text-[2.5rem] leading-tight font-bold text-tinta">Política de privacidad y cookies</h1>
+        <p class="text-[.95rem] text-gris">Versión {{ version }}</p>
+    </header>
+
+    <div class="contenido text-[1.02rem] leading-relaxed text-tinta [&_h2]:mt-10 [&_td]:border-t [&_td]:border-linea [&_td]:py-2.5 [&_td]:pe-4 [&_td]:align-top [&_th]:pb-2 [&_th]:pe-4 [&_th]:text-left [&_th]:text-sm [&_th]:font-semibold">
+        <h2>1. Quién es responsable de tus datos</h2>
+        <p>
+            El responsable del tratamiento es <strong>{{ responsable }}</strong>{% if legal and legal.rut %}, RUT {{ legal.rut }}{% endif %}.
+            {% if email %}Para cualquier consulta sobre tus datos escribe a <a href="mailto:{{ email }}">{{ email }}</a>.{% endif %}
+        </p>
+
+        <h2>2. Qué datos tratamos y para qué</h2>
+        <h3>Formulario de contacto</h3>
+        <p>
+            Si nos escribes, guardamos tu nombre, tu correo y el mensaje, solo para responderte.
+            La base es tu consentimiento, que entregas al enviar el formulario.
+            Los conservamos el tiempo necesario para atender tu consulta y como máximo 24 meses desde el último contacto.
+        </p>
+        <h3>Analíticas del sitio (solo si las aceptas)</h3>
+        <p>
+            Si aceptas las cookies analíticas, registramos cómo se usa el sitio: páginas vistas, tipo de dispositivo y navegador,
+            desde dónde llegaste (por ejemplo, un buscador o una red social), cuánto dura la visita, si enviaste el formulario y
+            si abriste la galería. Lo asociamos a identificadores aleatorios que no revelan quién eres.
+            Sirve para entender qué funciona y mejorar el sitio. La base es tu consentimiento.
+            Guardamos estos datos 13 meses; después solo conservamos totales anónimos.
+        </p>
+        <h3>Si no aceptas</h3>
+        <p>
+            El sitio funciona igual. Solo contamos cuántas veces se ve cada página, sin cookies analíticas
+            ni ningún dato que te identifique.
+        </p>
+
+        <h2>3. Cookies que usamos</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr><th scope="col">Cookie</th><th scope="col">Para qué</th><th scope="col">Duración</th><th scope="col">Tipo</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>_consent_status</code></td><td>Recordar si aceptaste o rechazaste las cookies analíticas.</td><td>1 año</td><td>Técnica (necesaria)</td></tr>
+                    <tr><td><code>dl_session</code></td><td>Seguridad de los formularios (protección CSRF) y sesión del panel de administración.</td><td>14 días</td><td>Técnica (necesaria)</td></tr>
+                    <tr><td><code>_session_id</code></td><td>Agrupar lo que ocurre en una misma visita.</td><td>30 minutos, se renueva mientras navegas</td><td>Analítica (con tu consentimiento)</td></tr>
+                    <tr><td><code>_visitor_id</code></td><td>Distinguir visitantes nuevos de recurrentes.</td><td>90 días</td><td>Analítica (con tu consentimiento)</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+            Todas son cookies propias de este sitio. No usamos cookies de publicidad ni compartimos datos con redes publicitarias.
+            Las fuentes y los íconos se sirven desde este mismo sitio.
+        </p>
+
+        <h2>4. Servicios de terceros</h2>
+        <p>
+            El mapa de ubicación es de Google Maps y <strong>solo se carga si pulsas «Ver mapa»</strong>. Al cargarlo, Google recibe
+            tu dirección IP y puede usar sus propias cookies según su política de privacidad.
+            Los datos del sitio se alojan en un proveedor de hosting que los trata por cuenta nuestra.
+            No vendemos ni cedemos tus datos.
+        </p>
+
+        <h2>5. Tus derechos</h2>
+        <p>
+            Puedes solicitar el acceso, la rectificación, la supresión, la oposición, la portabilidad y el bloqueo de tus datos
+            {% if email %}escribiendo a <a href="mailto:{{ email }}">{{ email }}</a>{% else %}a través del formulario de contacto{% endif %}.
+            Responderemos dentro del plazo que establece la ley. Si no quedas conforme, puedes reclamar ante la
+            Agencia de Protección de Datos Personales.
+        </p>
+
+        <h2>6. Cómo cambiar tu decisión sobre las cookies</h2>
+        <p>
+            Puedes aceptar o retirar tu consentimiento cuando quieras con el botón
+            <button type="button" data-preferencias-cookies class="font-semibold text-bosque underline decoration-oro underline-offset-[3px] hover:text-oro">Preferencias de cookies</button>,
+            que también está al pie de cada página. Si lo retiras, borramos las cookies analíticas de tu navegador.
+            También puedes borrarlas desde la configuración de tu navegador.
+        </p>
+
+        <h2>7. Eliminar los datos de tus visitas</h2>
+        <p>
+            Puedes borrar ahora mismo todo lo que registramos de las visitas hechas desde este navegador. Al hacerlo también
+            retiramos tu consentimiento, para no volver a juntar datos en tu próxima visita. Para borrar los mensajes que nos
+            hayas enviado por el formulario, escríbenos{% if email %} a <a href="mailto:{{ email }}">{{ email }}</a>{% endif %}.
+        </p>
+        <p>
+            <button type="button" data-eliminar-mis-datos
+                    class="rounded-lg border border-bosque px-5 py-2.5 font-medium text-bosque transition hover:bg-bosque hover:text-white focus-visible:ring-2 focus-visible:ring-oro focus-visible:ring-offset-2 focus-visible:outline-none">
+                Eliminar mis datos
+            </button>
+        </p>
+        <p data-resultado-eliminar role="status" class="text-sm text-gris"></p>
+
+        <h2>8. Cambios en esta política</h2>
+        <p>
+            Si cambiamos esta política, actualizaremos la versión indicada arriba y te volveremos a pedir tu decisión sobre las cookies.
+        </p>
+    </div>
+</article>
+{% endblock %}
