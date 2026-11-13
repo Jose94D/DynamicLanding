@@ -81,14 +81,171 @@
 
 ### Base de datos
 
-<p align="center">
-  <img width="8192" height="2326" alt="Modelo relacional de la base de datos" src="https://github.com/user-attachments/assets/193edd9b-33c4-40e3-9a94-db1eb9a61e91" />
-</p>
+```mermaid
+erDiagram
+    analiticas_sesiones ||--o{ analiticas_eventos : "tiene"
+
+    admin {
+        int id PK
+        varchar username UK
+        varchar password_hash
+    }
+    modulos {
+        varchar id PK "slug = plantilla modulos/<id>.html"
+        varchar nombre_legible
+        bool activo
+        int orden
+    }
+    contenido_hero {
+        int id PK "fila única"
+        text titulo
+        text subtitulo
+        text texto_boton
+        text url_boton
+    }
+    contenido_about {
+        int id PK "fila única"
+        text titulo
+        text descripcion
+        text mision
+        varchar nombre_archivo
+    }
+    contenido_about_bloques {
+        varchar id PK
+        varchar nombre_legible
+        bool activo
+        int orden
+    }
+    contenido_carousel {
+        int id PK
+        varchar nombre_archivo
+        int orden
+    }
+    contenido_services {
+        int id PK
+        varchar icono
+        text titulo
+        text descripcion
+        int orden
+    }
+    contenido_gallery {
+        int id PK
+        varchar nombre_archivo
+        text titulo
+        int orden
+    }
+    contenido_testimonials {
+        int id PK
+        text nombre
+        text cargo
+        text texto
+        varchar foto
+        int calificacion "1 a 5"
+        int orden
+    }
+    contenido_blog {
+        int id PK
+        text titulo
+        varchar slug UK
+        text extracto
+        longtext contenido
+        varchar imagen_portada
+        datetime fecha_publicacion
+        bool activo
+    }
+    contenido_contact_submodulos {
+        varchar id PK
+        varchar nombre_legible
+        bool activo
+        int orden
+    }
+    contenido_contact_datos {
+        int id PK "fila única"
+        text titulo
+        text subtitulo
+        text telefono
+        text email
+        text ubicacion_texto
+        text horario
+    }
+    contenido_contact_mapa {
+        int id PK "fila única"
+        text direccion
+    }
+    configuracion_seo {
+        int id PK "fila única"
+        text meta_titulo
+        text meta_descripcion
+        varchar og_image
+    }
+    configuracion_seo_blog {
+        int id PK "fila única"
+        text meta_titulo
+        text meta_descripcion
+        varchar og_image
+    }
+    configuracion_legal {
+        int id PK "fila única"
+        text razon_social
+        varchar rut
+        varchar email_privacidad
+    }
+    configuracion_redes {
+        int id PK
+        varchar plataforma UK
+        text access_token
+        varchar account_id
+        bool activo_api
+    }
+    consentimientos {
+        int id PK
+        datetime fecha
+        varchar decision "aceptado / rechazado / retirado"
+        varchar version
+        varchar referencia "también va en la cookie"
+    }
+    analiticas_visitas {
+        int id PK
+        datetime fecha
+        varchar ruta
+    }
+    analiticas_sesiones {
+        varchar session_id PK
+        varchar visitor_id
+        datetime inicio
+        datetime ultima_actividad
+        int segundos_activos
+        varchar dispositivo
+        varchar navegador
+        varchar sistema
+        varchar origen
+        varchar referente
+        varchar utm_source
+        varchar utm_medium
+        varchar utm_campaign
+    }
+    analiticas_eventos {
+        int id PK
+        varchar session_id FK
+        datetime fecha
+        varchar tipo
+        varchar ruta
+    }
+    mensajes_contacto {
+        int id PK
+        text nombre
+        varchar email
+        text mensaje
+        datetime fecha_envio
+        bool leido
+    }
+```
 
 * `contenido_*`: una tabla por sección de la landing; `modulos` guarda su orden y visibilidad.
 * `configuracion_*`: SEO, SEO del blog, textos legales y redes sociales.
 * `analiticas_visitas` cuenta visitas anónimas sin cookies; `analiticas_sesiones` y `analiticas_eventos` solo se llenan con consentimiento, que queda registrado en `consentimientos`.
 * `mensajes_contacto` y `admin` completan el esquema.
+* La única clave foránea es `analiticas_eventos.session_id` (con `ON DELETE CASCADE`); las tablas marcadas "fila única" tienen siempre `id = 1`.
 
 ## Ejecutar
 
